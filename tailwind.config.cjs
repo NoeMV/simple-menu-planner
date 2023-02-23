@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         'signika-negative': ['Signika Negative', 'sans-serif'],
       },
+      backgroundImage: {
+        'start-image': "url('./assets/blurry-gradient-haikei.svg')",
+      }
     },
   },
   plugins: [],
