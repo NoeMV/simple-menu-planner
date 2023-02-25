@@ -27,16 +27,21 @@ const getCurrentUser = () => {
 }
 
 router.beforeEach(async (to, from, next) => {
+    const user = await getCurrentUser();
+
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-        if(await getCurrentUser()){
+        if(user){
             next();
         } else {
             alert('you dont have access');
             next('/login');
         }
+    } else if ((to.name == 'Login' || to.name == 'Register') && user){
+        next({ name: 'Dashboard' });
     } else {
         next();
     }
+
 });
 
 export default router;

@@ -11,7 +11,7 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl py-24 flex justify-center">
+    <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
         <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-700">Registro</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="userStore.register(email, password)">

@@ -26,7 +26,6 @@ export const useUsersStore = defineStore('users', () => {
         try {
             const res = await createUserWithEmailAndPassword(getAuth(), email, password);
             await addUser(res.user.uid, {name: res.user.displayName, email: res.user.email, menus: []});
-            await getUser(res.user.uid);
             router.push('/dashboard');
         } catch (error) {
             switch(error.code){
@@ -51,8 +50,7 @@ export const useUsersStore = defineStore('users', () => {
 
     const login = async (email, password) => {
         try {
-            const res = await signInWithEmailAndPassword(getAuth(), email, password);
-            await getUser(res.user.uid);
+            await signInWithEmailAndPassword(getAuth(), email, password);
             router.push('/dashboard');
         } catch (error) {
             switch(error.code){
@@ -82,7 +80,6 @@ export const useUsersStore = defineStore('users', () => {
             if(res._tokenResponse.hasOwnProperty('isNewUser')){
                 await addUser(res.user.uid, {name: res.user.displayName, email: res.user.email, menus: []});
             }
-            await getUser(res.user.uid);
             router.push('/dashboard');
         } catch (error) {
             console.log(error);
