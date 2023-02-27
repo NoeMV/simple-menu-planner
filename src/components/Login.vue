@@ -37,7 +37,7 @@
             </form>
             <div class="relative flex py-5 items-center mt-6">
                 <div class="flex-grow border-t-2 border-slate-600"></div>
-                <h2 class="flex-shrink mx-2 font-signika-negative font-medium text-xl text-justify text-slate-700">
+                <h2 class="flex-shrink mx-2 font-signika-negative font-medium text-xl text-center align-middle text-slate-700">
                     O continúa con
                 </h2>
                 <div class="flex-grow border-t-2 border-slate-600"></div>

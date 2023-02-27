@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from '@firebase/auth';
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
@@ -106,8 +106,18 @@ export const useUsersStore = defineStore('users', () => {
 
     const getUser = async (id) => {
         try {
-            const res = await getDoc(doc(db, "users", id));
-            user.value = res.data();
+            const response = await getDoc(doc(db, "users", id));
+            let obj = response.data();
+            obj.id = response.id;
+            user.value = obj;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const updateUser = async (id, data) => {
+        try {
+            await updateDoc(doc(db, "users", id), data);
         } catch (error) {
             console.log(error);
         }
@@ -122,6 +132,7 @@ export const useUsersStore = defineStore('users', () => {
         authWithGoogle,
         logout,
         addUser,
-        getUser
+        getUser,
+        updateUser
     };
 });

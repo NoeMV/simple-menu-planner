@@ -1,13 +1,35 @@
 <script setup>
     import { useUsersStore } from '../stores/users';
+    import { useMenusStore } from '../stores/menus';
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
+    import Modal from './Modal.vue';
 
     const userStore = useUsersStore();
+    const menuStore = useMenusStore();
     const router = useRouter();
 
     const {user} = storeToRefs(userStore);
+
+    const statusText = ref('');
+    const showModal = ref(false);
+
+    function menuAction (menuCode, userStatus) {
+        if(userStatus == 'blocked'){
+            statusText.value = "No puedes ingresar a este menu, tu solicitud ha sido bloqueada";
+            showModal.value = true;
+            return;
+        }
+
+        if(userStatus == 'pending'){
+            statusText.value = "Tu solicitud para participar en este menu aún no ha sido aceptada";
+            showModal.value = true;
+            return;
+        }
+
+        router.push({name: 'MenuIndex', params: {id: menuCode}});
+    }
 
 </script>
 
@@ -19,17 +41,32 @@
             </h1>
             <div class="overflow-auto h-80">
                 <div class="flex flex-wrap justify-center items-center">
-                    <p v-for="i in 16" class="px-10 py-8">{{ i + " menu" }}</p>
+                    <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="px-10 py-8 mx-2 my-2 bg-white bg-opacity-40 rounded-3xl shadow-sm hover:cursor-pointer hover:bg-opacity-60">
+                        <p class="font-medium font-signika-negative text-slate-700 text-lg">{{ menu.name }}</p>
+                        <p class="font-normal font-signika-negative text-slate-500">{{ menu.status }}</p>
+                    </div>
                 </div>
             </div>
             <div class="flex justify-between w-full">
-                <button class="py-1 px-3 w-fit font-signika-negative font-medium text-sm sm:text-xl text-slate-100 bg-sky-500 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-lg">
+                <router-link :to="{name: 'MenuCreate'}" class="py-1 px-3 w-fit font-signika-negative font-medium text-sm sm:text-xl text-slate-100 bg-sky-600 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-md">
                     Crear menu
-                </button>
-                <button class="py-1 px-3 w-fit font-signika-negative font-medium text-sm sm:text-xl text-slate-100 bg-sky-500 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-lg">
+                </router-link>
+                <router-link :to="{name: 'MenuJoin'}" class="py-1 px-3 w-fit font-signika-negative font-medium text-sm sm:text-xl text-slate-100 bg-sky-600 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-md">
                     Unirse a menu
-                </button>
+                </router-link>
             </div>
+            <Teleport to="body">
+                <Modal :show="showModal" @close="showModal = false">
+                    <template #header>
+                        <h3 class="font-signika-negative font-medium text-base md:text-xl text-center text-slate-700">
+                            Estado del menu
+                        </h3>
+                    </template>
+                    <template #body>
+                        <p class="font-medium font-signika-negative text-slate-700 text-lg">{{ statusText }}</p>
+                    </template>
+                </Modal>
+            </Teleport>
         </div>
     </div>
 </template>
