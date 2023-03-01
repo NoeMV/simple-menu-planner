@@ -5,6 +5,7 @@
     const userStore = useUsersStore();
 
     const error = userStore.errorMessage;
+    const name = ref('');
     const email = ref('');
     const password = ref('');
 
@@ -14,7 +15,13 @@
     <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
         <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-700">Registro</h1>
-            <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="userStore.register(email, password)">
+            <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="userStore.register(name, email, password)">
+                <div class="mb-6 relative w-full">
+                    <input type="name" autocomplete="off" id="name" placeholder="name" v-model="name" class="peer mt-1 w-full bg-opacity-0 bg-white border-b-2 border-slate-50 px-0 py-1 placeholder:text-transparent focus:border-slate-500 focus:outline-none">
+                    <label for="name" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-700 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                        Nombre
+                    </label>
+                </div>
                 <div class="mb-6 relative w-full">
                     <input type="email" autocomplete="off" id="email" placeholder="email" v-model="email" class="peer mt-1 w-full bg-opacity-0 bg-white border-b-2 border-slate-50 px-0 py-1 placeholder:text-transparent focus:border-slate-500 focus:outline-none">
                     <label for="email" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-700 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">

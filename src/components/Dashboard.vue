@@ -41,9 +41,9 @@
             </h1>
             <div class="overflow-auto h-80">
                 <div class="flex flex-wrap justify-center items-center">
-                    <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="px-10 py-8 mx-2 my-2 bg-white bg-opacity-40 rounded-3xl shadow-sm hover:cursor-pointer hover:bg-opacity-60">
+                    <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="px-10 py-8 mx-2 my-2 bg-opacity-40 rounded-3xl shadow-sm text-center hover:cursor-pointer hover:bg-opacity-60" :class="menu.status == 'pending' ? ['bg-amber-200'] : menu.status == 'blocked' ? ['bg-rose-300'] : ['bg-white']">
                         <p class="font-medium font-signika-negative text-slate-700 text-lg">{{ menu.name }}</p>
-                        <p class="font-normal font-signika-negative text-slate-500">{{ menu.status }}</p>
+                        <p class="font-normal font-signika-negative text-slate-500">{{ menu.status == 'pending' ? "Solicitud pendiente" : menu.status == 'blocked' ? "Bloqueado" : "Participante" }}</p>
                     </div>
                 </div>
             </div>

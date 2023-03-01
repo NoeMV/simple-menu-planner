@@ -9,6 +9,7 @@ const routes = [
     { path: '/menu/create', name: 'MenuCreate', component: () => import('../components/Menu/Create.vue'), meta: {requiresAuth: true}},
     { path: '/menu/join', name: 'MenuJoin', component: () => import('../components/Menu/Join.vue'), meta: {requiresAuth: true}},
     { path: '/menu/:id', name: 'MenuIndex', component: () => import('../components/Menu/Index.vue'), meta: {requiresAuth: true}, props: true},
+    { path: '/menu/:id/settings', name: 'MenuSettings', component: () => import('../components/Menu/Settings.vue'), meta: {requiresAuth: true}, props: true},
 ];
 
 const router = createRouter({

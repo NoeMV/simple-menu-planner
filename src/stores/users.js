@@ -22,10 +22,10 @@ export const useUsersStore = defineStore('users', () => {
         }
     });
 
-    const register = async (email, password) => {
+    const register = async (name, email, password) => {
         try {
             const res = await createUserWithEmailAndPassword(getAuth(), email, password);
-            await addUser(res.user.uid, {name: res.user.displayName, email: res.user.email, menus: []});
+            await addUser(res.user.uid, {name: name, email: res.user.email, menus: []});
             router.push('/dashboard');
         } catch (error) {
             switch(error.code){

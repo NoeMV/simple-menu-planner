@@ -40,10 +40,6 @@ export const useMenusStore = defineStore('menus', () => {
                 let obj = response.data();
                 obj.id = response.id;
                 menu.value = obj;
-                await getMeals(menu.value.meals);
-                await getIngredients(menu.value.ingredients);
-                await getRequests(menu.value.requests);
-                await getParticipants(menu.value.participants);
             } else {
                 errorMessage.value = "No se ha encontrado el menu"
             }
@@ -221,7 +217,6 @@ export const useMenusStore = defineStore('menus', () => {
     const updateMenu = async (id, data) => {
         try {
             await updateDoc(doc(db, "menus", id), data);
-            await getMenu(id);
         } catch (error) {
             console.log(error);
         }
