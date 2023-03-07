@@ -1,13 +1,11 @@
 <script setup>
     import { useUsersStore } from '../stores/users';
-    import { useMenusStore } from '../stores/menus';
-    import { onMounted, ref } from 'vue';
+    import { ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import Modal from './Modal.vue';
 
     const userStore = useUsersStore();
-    const menuStore = useMenusStore();
     const router = useRouter();
 
     const {user} = storeToRefs(userStore);

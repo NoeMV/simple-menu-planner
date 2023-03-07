@@ -23,19 +23,19 @@
             blocked: []
         }
 
-        await menuStore.createMenu(obj);
+        const { menuCreated } = await menuStore.createMenu(obj);
 
         const aux = userStore.user.menus;
         aux.push({
-            code: menuStore.menu.id,
-            name: menuStore.menu.name,
+            code: menuCreated.value.id,
+            name: menuCreated.value.name,
             status: 'participant',
             creator: true
         });
 
         await userStore.updateUser(userStore.user.id, {menus: aux});
 
-        router.push({name: 'MenuIndex', params: {id: menuStore.menu.id}});
+        router.push({name: 'MenuIndex', params: {id: menuCreated.value.id}});
     }
 
 </script>

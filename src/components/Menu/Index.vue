@@ -1,5 +1,5 @@
 <script setup>
-    import { onBeforeMount, ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { useMenusStore } from '../../stores/menus';
     import { useUsersStore } from '../../stores/users';
@@ -16,10 +16,17 @@
         }
     });
 
-    onBeforeMount(async ()=> {
-        await menuStore.getMenu(props.id);
-        await menuStore.getMeals(menuStore.menu.meals);
-        await menuStore.getRequests(menuStore.menu.requests);
+    const menuData = ref({});
+    const requestsData = ref([]);
+    const mealsData = ref([]);
+
+    onMounted(async () => {
+        const {menu, errorMenu} = await menuStore.getMenu(props.id);
+        menuData.value = menu.value;
+        const {requests, errorRequests} = await menuStore.getRequests(menuData.value.requests);
+        requestsData.value = requests.value;
+        const {meals, errorMeals} = await menuStore.getMeals(menuData.value.meals);
+        mealsData.value = meals.value;
     });
 
 </script>
@@ -28,9 +35,9 @@
     <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
         <div class="py-8 px-10 w-full flex flex-col justify-center items-center space-y-8 bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-700 w-full pb-2 border-b-2 border-slate-500">
-                {{ menuStore.menu?.name }}
+                {{ menuData.name }}
             </h1>
-            <div v-if="(menuStore.menu.requests?.length > 0)">
+            <div v-if="(requestsData.length > 0)" class="py-2 px-4 w-full font-medium font-signika-negative text-slate-700 text-center bg-teal-500 bg-opacity-40 rounded-lg">
                 Hay solicitudes para unirse en espera
             </div>
             <p class="font-medium font-signika-negative text-slate-700 text-lg">
@@ -42,7 +49,7 @@
             <p class="font-medium font-signika-negative text-slate-700 text-lg">
                 {{ "Meals list" }}
             </p>
-            <span v-for="meal in menuStore.meals" :key="meal.id">
+            <span v-for="meal in mealsData" :key="meal.id">
                 {{ meal.name }}
             </span>
             <div class="flex justify-between w-full">

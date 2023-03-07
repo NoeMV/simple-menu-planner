@@ -10,43 +10,42 @@
     const userStore = useUsersStore();
 
     const code = ref('');
+    const errorMsg = ref('');
 
     async function handleJoin() {
         // get menu and check if exists
-        await menuStore.getMenu(code.value);
-        if(menuStore.errorMessage){
-            return;
-        }
+        const {menu, errorMenu} = await menuStore.getMenu(code.value);
+        errorMsg.value = errorMenu.value;
 
         let index = userStore.user.menus.map(e => e.code).indexOf(code.value);
         if (index != -1) {
             switch (userStore.user.menus[index].status){
                 case "participant":
-                    menuStore.errorMessage = "Ya estás participando en este menu";
+                    errorMsg.value = "Ya estás participando en este menu";
                 break;
                 case "pending":
-                    menuStore.errorMessage = "Tu solicitud para unirte al menu sigue en espera";
+                    errorMsg.value = "Tu solicitud para unirte al menu sigue en espera";
                 break;
                 case "blocked":
-                    menuStore.errorMessage = "Has sido bloqueado de este menu";
+                    errorMsg.value = "Has sido bloqueado de este menu";
                 break;
                 default:
-                    menuStore.errorMessage = "Ha ocurrido un error";
+                    errorMsg.value = "Ha ocurrido un error";
                 break;
             }
             return;
         }
 
         // get menu requests array and add user id
-        const menuRequests = menuStore.menu.requests;
+        const menuRequests = menu.value.requests;
         menuRequests.push(userStore.user.id);
-        await menuStore.updateMenu(menuStore.menu.id, {requests: menuRequests});
+        await menuStore.updateMenu(menu.value.id, {requests: menuRequests});
 
         // get user menus and add new menu info (pending which means waiting for approval)
         const userMenus = userStore.user.menus;
         userMenus.push({
-            code: menuStore.menu.id,
-            name: menuStore.menu.name,
+            code: menu.value.id,
+            name: menu.value.name,
             status: 'pending',
             creator: false
         });
@@ -73,8 +72,8 @@
                         Debes esperar a que algún participante del menu acepte tu solicitud para unirte.
                     </p>
                 </div>
-                <div v-if="menuStore.errorMessage" class="mb-6 relative w-full">
-                    <p class="font-signika-negative font-medium text-lg text-rose-500 text-center">{{ menuStore.errorMessage }}</p>
+                <div v-if="errorMsg" class="mb-6 relative w-full">
+                    <p class="font-signika-negative font-medium text-lg text-rose-500 text-center">{{ errorMsg }}</p>
                 </div>
                 <button type="submit" class="py-1 px-4 w-fit font-signika-negative font-medium text-lg rounded-3xl text-slate-100 bg-sky-600 ease-in-out hover:bg-sky-700 hover:drop-shadow-md">
                     Continuar
