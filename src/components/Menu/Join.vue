@@ -13,43 +13,12 @@
     const errorMsg = ref('');
 
     async function handleJoin() {
-        // get menu and check if exists
-        const {menu, errorMenu} = await menuStore.getMenu(code.value);
-        errorMsg.value = errorMenu.value;
+        const { error } = await menuStore.joinMenu(code.value);
+        errorMsg.value = error.value;
 
-        let index = userStore.user.menus.map(e => e.code).indexOf(code.value);
-        if (index != -1) {
-            switch (userStore.user.menus[index].status){
-                case "participant":
-                    errorMsg.value = "Ya estás participando en este menu";
-                break;
-                case "pending":
-                    errorMsg.value = "Tu solicitud para unirte al menu sigue en espera";
-                break;
-                case "blocked":
-                    errorMsg.value = "Has sido bloqueado de este menu";
-                break;
-                default:
-                    errorMsg.value = "Ha ocurrido un error";
-                break;
-            }
+        if(errorMsg.value != ''){
             return;
         }
-
-        // get menu requests array and add user id
-        const menuRequests = menu.value.requests;
-        menuRequests.push(userStore.user.id);
-        await menuStore.updateMenu(menu.value.id, {requests: menuRequests});
-
-        // get user menus and add new menu info (pending which means waiting for approval)
-        const userMenus = userStore.user.menus;
-        userMenus.push({
-            code: menu.value.id,
-            name: menu.value.name,
-            status: 'pending',
-            creator: false
-        });
-        await userStore.updateUser(userStore.user.id, {menus: userMenus});
 
         router.push({name: 'Dashboard'});
     }
@@ -58,7 +27,7 @@
 
 <template>
     <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
-        <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
+        <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-20 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-700">Unirse a un menu</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="handleJoin()">
                 <div class="mb-6 relative w-full">

@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, getFirestore, documentId, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, getFirestore, documentId, updateDoc, deleteDoc, runTransaction } from "firebase/firestore";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
@@ -11,17 +11,86 @@ export const useMenusStore = defineStore('menus', () => {
 
     const userStore = useUsersStore();
 
+    const currentMenuId = ref("");
+
     const createMenu = async (data) => {
         const menuCreated = ref({});
-
         try {
-            const response = await addDoc(collection(db, "menus"), data);
-            menuCreated.value = {id: response.id, ...response.data()};
+            await runTransaction(db, async (transaction) => {
+                const menuRef = doc(collection(db, "menus"));
+                transaction.set(menuRef, data);
+                menuCreated.value = {id: menuRef.id};
+
+                const aux = userStore.user.menus;
+                aux.push({
+                    code: menuCreated.value.id,
+                    name: data.name,
+                    status: 'participant',
+                    creator: true
+                });
+
+                transaction.update(doc(db, "users", userStore.user.id), {menus: aux});
+            });
         } catch (error) {
             console.log(error);
         }
 
         return { menuCreated };
+    }
+
+    const joinMenu = async (id) => {
+        const error = ref('');
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", id));
+
+                if(!response.exists()){
+                    error.value = "El menu no existe";
+                    return { error };
+                } 
+
+                let index = userStore.user.menus.map(e => e.code).indexOf(id);
+                if (index != -1) {
+                    switch (userStore.user.menus[index].status){
+                        case "participant":
+                            error.value = "Ya estás participando en este menu";
+                        break;
+                        case "pending":
+                            error.value = "Tu solicitud para unirte al menu sigue en espera";
+                        break;
+                        case "blocked":
+                            error.value = "Has sido bloqueado de este menu";
+                        break;
+                        default:
+                            error.value = "Ha ocurrido un error";
+                        break;
+                    }
+                    return { error };
+                }
+
+                const menu = {id: response.id, ...response.data()};
+
+                // get menu requests array and add user id
+                const menuRequests = menu.requests;
+                menuRequests.push(userStore.user.id);
+                transaction.update(doc(db, "menus", id), {requests: menuRequests});
+
+                // get user menus and add new menu info (pending which means waiting for approval)
+                const userMenus = userStore.user.menus;
+                userMenus.push({
+                    code: menu.id,
+                    name: menu.name,
+                    status: 'pending',
+                    creator: false
+                });
+                transaction.update(doc(db, "users", userStore.user.id), {menus: userMenus});
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+        return { error };
     }
 
     const getMenu = async (id) => {
@@ -33,6 +102,7 @@ export const useMenusStore = defineStore('menus', () => {
             if(response.exists()){
                 menu.value = {id: response.id, ...response.data()};
                 errorMenu.value = "";
+                currentMenuId.value = response.id;
             } else {
                 errorMenu.value = "No se ha encontrado el menu";
             }
@@ -200,99 +270,196 @@ export const useMenusStore = defineStore('menus', () => {
         }
     }
 
-    const acceptRequest = async (menuId, targetId, currentUserId, requestsData, participantsData) => {
-        const requestList = requestsData.value.map(e => e.id);
-        const index = requestList.indexOf(targetId);
-        requestList.splice(index, 1);
+    const acceptRequest = async (menuId, targetId) => {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
 
-        const participantList = participantsData.value.map(e => e.id);
-        participantList.push(targetId);
+                if(!response.exists()){
+                    return;
+                } 
 
-        await updateMenu(menuId, {requests: requestList, participants: participantList});
+                const menu = {id: response.id, ...response.data()};
 
-        await userStore.getUser(targetId);
-        const menuList = userStore.user.menus;
-        const indexMenu = menuList.map(e => e.code).indexOf(menuId);
-        menuList[indexMenu].status = 'participant';
-        
-        await userStore.updateUser(targetId, {menus: menuList});
+                const userResponse = await transaction.get(doc(db, "users", targetId));
 
-        await userStore.getUser(currentUserId);
+                if(!userResponse.exists()){
+                    return;
+                } 
+
+                const user = {id: userResponse.id, ...userResponse.data()};
+
+                const requestList = menu.requests;
+                const index = requestList.indexOf(targetId);
+                requestList.splice(index, 1);
+
+                const participantList = menu.participants;
+                participantList.push(targetId);
+
+                transaction.update(doc(db, "menus", menuId), {requests: requestList, participants: participantList});
+
+                const menuList = user.menus;
+                const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                menuList[indexMenu].status = 'participant';
+                
+                transaction.update(doc(db, "users", targetId), {menus: menuList});
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const cancelRequest = async (menuId, targetId, currentUserId, requestsData) => {
-        const requestList = requestsData.value.map(e => e.id);
-        const index = requestList.indexOf(targetId);
-        requestList.splice(index, 1);
+    const cancelRequest = async (menuId, targetId) => {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
 
-        await updateMenu(menuId, {requests: requestList});
+                if(!response.exists()){
+                    return;
+                } 
 
-        await userStore.getUser(targetId);
-        const menuList = userStore.user.menus;
-        const indexMenu = menuList.map(e => e.code).indexOf(menuId);
-        menuList.splice(indexMenu, 1);
-        
-        await userStore.updateUser(targetId, {menus: menuList});
+                const menu = {id: response.id, ...response.data()};
 
-        await userStore.getUser(currentUserId);
+                const userResponse = await transaction.get(doc(db, "users", targetId));
+
+                if(!userResponse.exists()){
+                    return;
+                } 
+
+                const user = {id: userResponse.id, ...userResponse.data()};
+
+                const requestList = menu.requests;
+                const index = requestList.indexOf(targetId);
+                requestList.splice(index, 1);
+
+                transaction.update(doc(db, "menus", menuId), {requests: requestList});
+
+                const menuList = user.menus;
+                const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                menuList.splice(indexMenu, 1);
+                
+                transaction.update(doc(db, "users", targetId), {menus: menuList});
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const blockRequest = async (menuId, targetId, currentUserId, requestsData, blockedData) => {
-        const requestList = requestsData.value.map(e => e.id);
-        const index = requestList.indexOf(targetId);
-        requestList.splice(index, 1);
+    const blockRequest = async (menuId, targetId) => {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
 
-        const blockedList = blockedData.value.map(e => e.id);
-        blockedList.push(targetId);
+                if(!response.exists()){
+                    return;
+                } 
 
-        await updateMenu(menuId, {requests: requestList, blocked: blockedList});
+                const menu = {id: response.id, ...response.data()};
 
-        await userStore.getUser(targetId);
-        const menuList = userStore.user.menus;
-        const indexMenu = menuList.map(e => e.code).indexOf(menuId);
-        menuList[indexMenu].status = 'blocked';
-        
-        await userStore.updateUser(targetId, {menus: menuList});
+                const userResponse = await transaction.get(doc(db, "users", targetId));
 
-        await userStore.getUser(currentUserId);
+                if(!userResponse.exists()){
+                    return;
+                } 
+
+                const user = {id: userResponse.id, ...userResponse.data()};
+
+                const requestList = menu.requests;
+                const index = requestList.indexOf(targetId);
+                requestList.splice(index, 1);
+
+                const blockedList = menu.blocked;
+                blockedList.push(targetId);
+
+                transaction.update(doc(db, "menus", menuId), {requests: requestList, blocked: blockedList});
+
+                const menuList = user.menus;
+                const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                menuList[indexMenu].status = 'blocked';
+                
+                transaction.update(doc(db, "users", targetId), {menus: menuList});
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const unblockUser = async (menuId, targetId, currentUserId, blockedData) => {
-        const blockedList = blockedData.value.map(e => e.id);
-        const index = blockedList.indexOf(targetId);
-        blockedList.splice(index, 1);
+    const unblockUser = async (menuId, targetId) => {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
 
-        await updateMenu(menuId, {blocked: blockedList});
+                if(!response.exists()){
+                    return;
+                } 
 
-        await userStore.getUser(targetId);
-        const menuList = userStore.user.menus;
-        const indexMenu = menuList.map(e => e.code).indexOf(menuId);
-        menuList.splice(indexMenu, 1);
-        
-        await userStore.updateUser(targetId, {menus: menuList});
+                const menu = {id: response.id, ...response.data()};
 
-        await userStore.getUser(currentUserId);
+                const userResponse = await transaction.get(doc(db, "users", targetId));
+
+                if(!userResponse.exists()){
+                    return;
+                } 
+
+                const user = {id: userResponse.id, ...userResponse.data()};
+
+                const blockedList = menu.blocked;
+                const index = blockedList.indexOf(targetId);
+                blockedList.splice(index, 1);
+
+                transaction.update(doc(db, "menus", menuId), {blocked: blockedList});
+
+                const menuList = user.menus;
+                const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                menuList.splice(indexMenu, 1);
+                
+                transaction.update(doc(db, "users", targetId), {menus: menuList});
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const removeParticipant = async (menuId, targetId, currentUserId, participantsData) => {
-        const participantList = participantsData.value.map(e => e.id);
-        const index = participantList.indexOf(targetId);
-        participantList.splice(index, 1);
+    const removeParticipant = async (menuId, targetId) => {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
 
-        await updateMenu(menuId, {participants: participantList});
+                if(!response.exists()){
+                    return;
+                } 
 
-        await userStore.getUser(targetId);
-        const menuList = userStore.user.menus;
-        const indexMenu = menuList.map(e => e.code).indexOf(menuId);
-        menuList.splice(indexMenu, 1);
-        
-        await userStore.updateUser(targetId, {menus: menuList});
+                const menu = {id: response.id, ...response.data()};
 
-        await userStore.getUser(currentUserId);
+                const userResponse = await transaction.get(doc(db, "users", targetId));
+
+                if(!userResponse.exists()){
+                    return;
+                } 
+
+                const user = {id: userResponse.id, ...userResponse.data()};
+
+                const participantList = menu.participants;
+                const index = participantList.indexOf(targetId);
+                participantList.splice(index, 1);
+
+                transaction.update(doc(db, "menus", menuId), {participants: participantList});
+
+                const menuList = user.menus;
+                const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                menuList.splice(indexMenu, 1);
+                
+                transaction.update(doc(db, "users", targetId), {menus: menuList});
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return {
+        currentMenuId,
         createMenu,
+        joinMenu,
         getMenu,
         getMeal,
         getMeals,

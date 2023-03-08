@@ -25,16 +25,6 @@
 
         const { menuCreated } = await menuStore.createMenu(obj);
 
-        const aux = userStore.user.menus;
-        aux.push({
-            code: menuCreated.value.id,
-            name: menuCreated.value.name,
-            status: 'participant',
-            creator: true
-        });
-
-        await userStore.updateUser(userStore.user.id, {menus: aux});
-
         router.push({name: 'MenuIndex', params: {id: menuCreated.value.id}});
     }
 
@@ -42,7 +32,7 @@
 
 <template>
     <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
-        <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
+        <div class="py-14 px-10 w-fit flex flex-col justify-center bg-white bg-opacity-20 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-700">Crear menu</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="handleCreate()">
                 <div class="mb-6 relative w-full">

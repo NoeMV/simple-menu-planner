@@ -1,14 +1,17 @@
 <script setup>
     import { useUsersStore } from '../stores/users';
+    import { useMenusStore } from '../stores/menus';
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import Modal from './Modal.vue';
 
     const userStore = useUsersStore();
+    const menuStore = useMenusStore();
     const router = useRouter();
 
     const {user} = storeToRefs(userStore);
+    menuStore.currentMenuId = "";
 
     const statusText = ref('');
     const showModal = ref(false);
@@ -33,13 +36,13 @@
 
 <template>
     <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
-        <div class="py-8 px-10 w-full flex flex-col justify-center items-center space-y-8 bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
+        <div class="py-8 px-10 w-full flex flex-col justify-center items-center space-y-8 bg-white bg-opacity-20 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-700 w-full pb-2 border-b-2 border-slate-500">
                 {{ "Menus de " + user?.name }}
             </h1>
             <div class="overflow-auto h-80">
                 <div class="flex flex-wrap justify-center items-center">
-                    <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="px-10 py-8 mx-2 my-2 bg-opacity-40 rounded-3xl shadow-sm text-center hover:cursor-pointer hover:bg-opacity-60" :class="menu.status == 'pending' ? ['bg-amber-200'] : menu.status == 'blocked' ? ['bg-rose-300'] : ['bg-white']">
+                    <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="px-10 py-8 mx-2 my-2 bg-opacity-30 rounded-3xl shadow-sm text-center hover:cursor-pointer hover:bg-opacity-50" :class="menu.status == 'pending' ? ['bg-amber-200'] : menu.status == 'blocked' ? ['bg-rose-300'] : ['bg-white']">
                         <p class="font-medium font-signika-negative text-slate-700 text-lg">{{ menu.name }}</p>
                         <p class="font-normal font-signika-negative text-slate-500">{{ menu.status == 'pending' ? "Solicitud pendiente" : menu.status == 'blocked' ? "Bloqueado" : "Participante" }}</p>
                     </div>

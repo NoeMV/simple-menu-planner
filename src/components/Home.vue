@@ -4,7 +4,7 @@
 
 <template>
     <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
-        <div class="py-5 sm:py-14 px-10 flex flex-col justify-center items-center space-y-8 bg-white bg-opacity-50 backdrop-blur-lg drop-shadow-md rounded-lg shadow-lg">
+        <div class="py-5 sm:py-14 px-10 flex flex-col justify-center items-center space-y-8 bg-white bg-opacity-20 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
             <h1 class="font-signika-negative font-semibold text-2xl md:text-4xl text-center text-sky-600">Simple menu planner</h1>
             <p class="font-signika-negative font-medium text-base md:text-xl text-justify text-slate-700">
                 Simple menu planner es una aplicación web para planificar comidas semanalmente, llevando un registro de qué se ha cocinado 
