@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { useUsersStore } from '../stores/users';
 
 const routes = [
     { path: '/', name: 'Home', component: () => import('../components/Home.vue')},
@@ -8,8 +9,9 @@ const routes = [
     { path: '/dashboard', name: 'Dashboard', component: () => import('../components/Dashboard.vue'), meta: {requiresAuth: true}},
     { path: '/menu/create', name: 'MenuCreate', component: () => import('../components/Menu/Create.vue'), meta: {requiresAuth: true}},
     { path: '/menu/join', name: 'MenuJoin', component: () => import('../components/Menu/Join.vue'), meta: {requiresAuth: true}},
-    { path: '/menu/:id', name: 'MenuIndex', component: () => import('../components/Menu/Index.vue'), meta: {requiresAuth: true}, props: true},
-    { path: '/menu/:id/settings', name: 'MenuSettings', component: () => import('../components/Menu/Settings.vue'), meta: {requiresAuth: true}, props: true},
+    { path: '/menu/:id', name: 'MenuIndex', component: () => import('../components/Menu/Index.vue'), meta: {requiresAuth: true, participant: true}, props: true},
+    { path: '/menu/:id/meals', name: 'MealsIndex', component: () => import('../components/Meal/Index.vue'), meta: {requiresAuth: true, participant: true}, props: true},
+    { path: '/menu/:id/settings', name: 'MenuSettings', component: () => import('../components/Menu/Settings.vue'), meta: {requiresAuth: true, participant: true}, props: true},
 ];
 
 const router = createRouter({
@@ -31,16 +33,32 @@ const getCurrentUser = () => {
 }
 
 router.beforeEach(async (to, from, next) => {
-    const user = await getCurrentUser();
+    const userStore = useUsersStore();
+    const currentUser = await getCurrentUser();
+
+    if(!currentUser){
+        userStore.user = null;
+    } else {
+        await userStore.getUser(currentUser.uid);
+    }
 
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-        if(user){
-            next();
+        if(userStore.user){
+            if(to.params.id){
+                if(userStore.user.menus.some((record) => record.code == to.params.id && record.status == 'participant')){
+                    next();
+                } else {
+                    alert('you dont have access to this menu');
+                    next('/dashboard');
+                }
+            } else {
+                next();
+            }
         } else {
-            alert('you dont have access');
+            alert('you dont have access to the app');
             next('/login');
         }
-    } else if ((to.name == 'Login' || to.name == 'Register' || to.name == 'Home') && user){
+    } else if ((to.name == 'Login' || to.name == 'Register' || to.name == 'Home') && userStore.user){
         next({ name: 'Dashboard' });
     } else {
         next();

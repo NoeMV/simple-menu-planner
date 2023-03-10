@@ -1,13 +1,11 @@
 import { doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, getFirestore, documentId, updateDoc, deleteDoc, runTransaction } from "firebase/firestore";
-import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { ref } from "vue";
 import { useUsersStore } from './users';
 
 export const useMenusStore = defineStore('menus', () => {
 
     const db = getFirestore();
-    const router = useRouter();
 
     const userStore = useUsersStore();
 
@@ -111,89 +109,6 @@ export const useMenusStore = defineStore('menus', () => {
         }
 
         return { menu, errorMenu };
-    }
-
-    const getMeal = async (id) => {
-        const meal = ref({});
-        const errorMeal = ref('');
-
-        try {
-            const response = await getDoc(doc(db, "meals", id))
-            if(response.exists()){
-                meal.value = {id: response.id, ...response.data()};
-                errorMeal.value = "";
-            } else {
-                errorMeal.value = "No se ha encontrado la comida";
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-        return { meal, errorMeal };
-    }
-
-    const getMeals = async (identifiers) => {
-        const meals = ref([]);
-        const errorMeals = ref('');
-
-        if(identifiers.length == 0){
-            errorMeals.value = "No hay comidas en el menu";
-        } else {
-            try {
-                const q = query(collection(db, "meals"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorMeals.value = "";
-                    meals.value.push({id: doc.id, ...doc.data()});
-                });
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        
-        return { meals, errorMeals };
-    }
-
-    
-    const getIngredient = async (id) => {
-        const ingredient = ref({});
-        const errorIngredient = ref('');
-
-        try {
-            const response = await getDoc(doc(db, "ingredients", id))
-            if(response.exists()){
-                ingredient.value = {id: response.id, ...response.data()};
-                errorIngredient.value = "";
-            } else {
-                errorIngredient.value = "No se ha encontrado el ingrediente";
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-        return { ingredient, errorIngredient };
-    }
-
-    const getIngredients = async (identifiers) => {
-        const ingredients = ref([]);
-        const errorIngredients = ref('');
-
-        if(identifiers.length == 0){
-            errorIngredients.value = "No hay ingredientes";
-        } else {
-            try {
-                const q = query(collection(db, "ingredients"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorIngredients.value = "";
-                    ingredients.value.push({id: doc.id, ...doc.data()});
-                });
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        
-        return { ingredients, errorIngredients };
     }
 
     const getRequests = async (identifiers) => {
@@ -456,15 +371,219 @@ export const useMenusStore = defineStore('menus', () => {
         }
     }
 
+    const createMeal = async (menuId, data) => {
+        const mealCreated = ref({});
+        const error = ref('');
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
+                const menu = {id: response.id, ...response.data()};
+
+                const mealRef = doc(collection(db, "meals"));
+                transaction.set(mealRef, data);
+                mealCreated.value = {id: mealRef.id};
+
+                const mealsList = menu.meals;
+                mealsList.push(mealCreated.value.id);
+
+                transaction.update(doc(db, "menus", menuId), {meals: mealsList});
+            });
+        } catch (error) {
+            console.log(error);
+            error.value = "Ha ocurrido un error, intenta más tarde"
+        }
+
+        return { error };
+    }
+
+    const getMeal = async (id) => {
+        const meal = ref({});
+        const errorMeal = ref('');
+
+        try {
+            const response = await getDoc(doc(db, "meals", id))
+            if(response.exists()){
+                meal.value = {id: response.id, ...response.data()};
+                errorMeal.value = "";
+            } else {
+                errorMeal.value = "No se ha encontrado la comida";
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
+        return { meal, errorMeal };
+    }
+
+    const getMeals = async (identifiers) => {
+        const meals = ref([]);
+        const errorMeals = ref('');
+
+        if(identifiers.length == 0){
+            errorMeals.value = "No hay comidas en el menu";
+        } else {
+            try {
+                const q = query(collection(db, "meals"), where(documentId(), 'in', identifiers));
+                const response = await getDocs(q);
+                response.forEach((doc) => {
+                    errorMeals.value = "";
+                    meals.value.push({id: doc.id, ...doc.data()});
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        
+        return { meals, errorMeals };
+    }
+
+    const updateMeal = async (id, data) => {
+        try {
+            await updateDoc(doc(db, "meals", id), data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const deleteMeal = async (menuId, mealId) => {
+        const error = ref('');
+        try {
+            await runTransaction(db, async (transaction) => {
+                const menuResponse = await transaction.get(doc(db, "menus", menuId));
+                const menu = {id: menuResponse.id, ...menuResponse.data()};
+
+                const mealResponse = await transaction.get(doc(db, "meals", mealId));
+                const meal = {id: mealResponse.id, ...mealResponse.data()};
+
+                const mealsList = menu.meals;
+                const index = mealsList.indexOf(mealId);
+                mealsList.splice(index, 1);
+
+                transaction.update(doc(db, "menus", menuId), {meals: mealsList});
+
+                transaction.delete(doc(db, "meals", mealId));
+            });
+        } catch (error) {
+            console.log(error);
+            error.value = "Ha ocurrido un error, intenta más tarde"
+        }
+
+        return { error };
+    }
+
+    const createIngredient = async (menuId, data) => {
+        const ingredientCreated = ref({});
+        const error = ref('');
+        try {
+            await runTransaction(db, async (transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
+                const menu = {id: response.id, ...response.data()};
+
+                const ingredientRef = doc(collection(db, "ingredients"));
+                transaction.set(ingredientRef, data);
+                ingredientCreated.value = {id: ingredientRef.id};
+
+                const ingredientsList = menu.ingredients;
+                ingredientsList.push(ingredientCreated.value.id);
+
+                transaction.update(doc(db, "menus", menuId), {ingredients: ingredientsList});
+            });
+        } catch (error) {
+            console.log(error);
+            error.value = "Ha ocurrido un error, intenta más tarde"
+        }
+
+        return { error };
+    }
+    
+    const getIngredient = async (id) => {
+        const ingredient = ref({});
+        const errorIngredient = ref('');
+
+        try {
+            const response = await getDoc(doc(db, "ingredients", id))
+            if(response.exists()){
+                ingredient.value = {id: response.id, ...response.data()};
+                errorIngredient.value = "";
+            } else {
+                errorIngredient.value = "No se ha encontrado el ingrediente";
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
+        return { ingredient, errorIngredient };
+    }
+
+    const getIngredients = async (identifiers) => {
+        const ingredients = ref([]);
+        const errorIngredients = ref('');
+
+        if(identifiers.length == 0){
+            errorIngredients.value = "No hay ingredientes";
+        } else {
+            try {
+                const q = query(collection(db, "ingredients"), where(documentId(), 'in', identifiers));
+                const response = await getDocs(q);
+                response.forEach((doc) => {
+                    errorIngredients.value = "";
+                    ingredients.value.push({id: doc.id, ...doc.data()});
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        
+        return { ingredients, errorIngredients };
+    }
+
+    const updateIngredient = async (id, data) => {
+        try {
+            await updateDoc(doc(db, "ingredients", id), data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const deleteIngredient = async (menuId, ingredientId, mealsIdentifiers) => {
+        const error = ref('');
+        try {
+
+            const {meals, errorMeals} = await getMeals(mealsIdentifiers);
+
+            if(meals.value.some(meal => meal.ingredients.includes(ingredientId))){
+                error.value = "No se puede eliminar el ingrediente porque está registrado en una comida";
+                return { error };
+            }
+
+            await runTransaction(db, async (transaction) => {
+                const menuResponse = await transaction.get(doc(db, "menus", menuId));
+                const menu = {id: menuResponse.id, ...menuResponse.data()};
+
+                const ingredientResponse = await transaction.get(doc(db, "meals", ingredientId));
+                const ingredient = {id: ingredientResponse.id, ...ingredientResponse.data()};
+
+                const ingredientsList = menu.meals;
+                const index = ingredientsList.indexOf(ingredientId);
+                ingredientsList.splice(index, 1);
+
+                transaction.update(doc(db, "menus", menuId), {ingredients: ingredientsList});
+
+                transaction.delete(doc(db, "ingredients", ingredientId));
+            });
+        } catch (error) {
+            console.log(error);
+            error.value = "Ha ocurrido un error, intenta más tarde";
+        }
+
+        return { error };
+    }
+
     return {
         currentMenuId,
         createMenu,
         joinMenu,
         getMenu,
-        getMeal,
-        getMeals,
-        getIngredient,
-        getIngredients,
         getRequests,
         getParticipants,
         getBlocked,
@@ -473,6 +592,16 @@ export const useMenusStore = defineStore('menus', () => {
         cancelRequest,
         blockRequest,
         unblockUser,
+        createMeal,
+        getMeal,
+        getMeals,
+        updateMeal,
+        deleteMeal,
+        createIngredient,
+        getIngredient,
+        getIngredients,
+        updateIngredient,
+        deleteIngredient,
         removeParticipant
     };
 });

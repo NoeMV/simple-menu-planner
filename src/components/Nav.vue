@@ -11,7 +11,7 @@
                 <router-link :to="{name: 'MenuIndex', props: {id: menuStore.currentMenuId}}" class="py-2 px-3 font-signika-negative font-medium text-lg text-slate-700 ease-in-out duration-75 hover:text-slate-900 hover:drop-shadow-lg hover:scale-105">
                     Inicio
                 </router-link>
-                <router-link :to="{name: 'MenuIndex', props: {id: menuStore.currentMenuId}}" class="py-2 px-3 font-signika-negative font-medium text-lg text-slate-700 ease-in-out duration-75 hover:text-slate-900 hover:drop-shadow-lg hover:scale-105">
+                <router-link :to="{name: 'MealsIndex', props: {id: menuStore.currentMenuId}}" class="py-2 px-3 font-signika-negative font-medium text-lg text-slate-700 ease-in-out duration-75 hover:text-slate-900 hover:drop-shadow-lg hover:scale-105">
                     Comidas
                 </router-link>
                 <router-link :to="{name: 'MenuIndex', props: {id: menuStore.currentMenuId}}" class="py-2 px-3 font-signika-negative font-medium text-lg text-slate-700 ease-in-out duration-75 hover:text-slate-900 hover:drop-shadow-lg hover:scale-105">
