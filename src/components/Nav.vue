@@ -5,7 +5,7 @@
 </script>
 
 <template>
-    <nav class="absolute z-50 top-16 left-24 px-4 py-5 bg-white bg-opacity-30 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
+    <nav class="absolute z-50 top-16 left-20 px-4 py-5 bg-white bg-opacity-50 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg">
         <div class="flex flex-col justify-center text-center items-center">
             <template v-if="!!menuStore.currentMenuId">
                 <router-link :to="{name: 'MenuIndex', props: {id: menuStore.currentMenuId}}" class="py-2 px-3 font-signika-negative font-medium text-lg text-slate-700 ease-in-out duration-75 hover:text-slate-900 hover:drop-shadow-lg hover:scale-105">
