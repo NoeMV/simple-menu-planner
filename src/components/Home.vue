@@ -31,7 +31,7 @@
                     </li>
                 </ul>
             </div>
-            <router-link :to="{name: 'Login'}" class="py-2 px-5 w-fit font-signika-negative font-medium text-xl rounded-3xl text-slate-100 bg-sky-600 ease-in-out hover:bg-sky-700 hover:drop-shadow-md">Continuar</router-link>
+            <router-link :to="{name: 'Login'}" class="py-2 px-5 w-fit font-signika-negative font-medium text-xl rounded-xl text-slate-100 bg-sky-600 ease-in-out hover:bg-sky-700 hover:drop-shadow-md">Continuar</router-link>
         </div>
     </div>
 </template>
