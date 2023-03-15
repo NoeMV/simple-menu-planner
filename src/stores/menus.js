@@ -560,10 +560,10 @@ export const useMenusStore = defineStore('menus', () => {
                 const menuResponse = await transaction.get(doc(db, "menus", menuId));
                 const menu = {id: menuResponse.id, ...menuResponse.data()};
 
-                const ingredientResponse = await transaction.get(doc(db, "meals", ingredientId));
+                const ingredientResponse = await transaction.get(doc(db, "ingredients", ingredientId));
                 const ingredient = {id: ingredientResponse.id, ...ingredientResponse.data()};
 
-                const ingredientsList = menu.meals;
+                const ingredientsList = menu.ingredients;
                 const index = ingredientsList.indexOf(ingredientId);
                 ingredientsList.splice(index, 1);
 

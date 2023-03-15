@@ -24,7 +24,7 @@
             <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-7 w-7 text-slate-700" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
           </Transition>
         </button>
-        <button @click="userStore.logout()" v-if="userStore.isLoggedIn" class="py-1 px-3 w-fit font-signika-negative font-medium text-base md:text-xl text-slate-100 bg-rose-600 rounded-xl ease-in-out hover:bg-rose-700 shadow-lg">
+        <button @click="userStore.logout()" v-if="userStore.isLoggedIn" class="py-1 px-3 w-fit font-signika-negative font-medium text-base md:text-xl text-slate-100 bg-sky-600 rounded-xl ease-in-out hover:bg-sky-700 shadow-lg">
             Salir
         </button>
     </div>

@@ -11,6 +11,9 @@ const routes = [
     { path: '/menu/join', name: 'MenuJoin', component: () => import('../components/Menu/Join.vue'), meta: {requiresAuth: true}},
     { path: '/menu/:id', name: 'MenuIndex', component: () => import('../components/Menu/Index.vue'), meta: {requiresAuth: true, participant: true}, props: true},
     { path: '/menu/:id/meals', name: 'MealsIndex', component: () => import('../components/Meal/Index.vue'), meta: {requiresAuth: true, participant: true}, props: true},
+    { path: '/menu/:id/meals/create', name: 'MealsCreate', component: () => import('../components/Meal/Create.vue'), meta: {requiresAuth: true, participant: true}, props: true},
+    { path: '/menu/:id/meals/:mealId/edit', name: 'MealsEdit', component: () => import('../components/Meal/Edit.vue'), meta: {requiresAuth: true, participant: true}, props: true},
+    { path: '/menu/:id/ingredients', name: 'IngredientsIndex', component: () => import('../components/Ingredient/Index.vue'), meta: {requiresAuth: true, participant: true}, props: true},
     { path: '/menu/:id/settings', name: 'MenuSettings', component: () => import('../components/Menu/Settings.vue'), meta: {requiresAuth: true, participant: true}, props: true},
 ];
 

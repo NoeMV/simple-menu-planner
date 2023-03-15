@@ -1,11 +1,9 @@
 <script async setup>
     import { ref } from 'vue';
     import { useMenusStore } from '../../stores/menus';
-    import { useRouter } from 'vue-router';
     import Modal from '../Modal.vue';
 
     const menuStore = useMenusStore();
-    const router = useRouter();
 
     const props = defineProps({
         id: {
@@ -14,34 +12,84 @@
         }
     });
 
-    const {menu, errorMenu} = await menuStore.getMenu(props.id);
-    const {meals, errorMeals} = await menuStore.getMeals(menu.value.meals);
+    const menuData = ref({});
+    const mealsData = ref([]);
+
+    const showModalConfirm = ref(false);
+    const target = ref({});
+
+    await initData();
+
+    async function initData(){
+        const {menu, errorMenu} = await menuStore.getMenu(props.id);
+        menuData.value = menu.value;
+        const {meals, errorMeals} = await menuStore.getMeals(menuData.value.meals);
+        mealsData.value = meals.value;
+    }
+
+    function handleAction(targetMeal){
+        target.value = targetMeal;
+        showModalConfirm.value = true;
+    }
+
+    async function deleteMeal(){
+        await menuStore.deleteMeal(props.id, target.value.id);
+        await initData();
+        showModalConfirm.value = false;
+    }
 
 </script>
 
 <template>
     <div class="relative py-8 px-10 w-full items-center space-y-8 bg-slate-100 rounded-xl shadow-xl">
         <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
-            Lista de comidas
+            Comidas
         </h1>
         <div class="overflow-auto h-80 space-y-3">
-            <div v-for="meal in meals" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+            <div v-for="meal in mealsData" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ meal.name }}
                 </p>
                 <div class="flex justify-end space-x-1 sm:space-x-2">
-                    <button class="p-1 w-fit font-signika-negative font-normal text-sm sm:text-base text-slate-100 bg-sky-600 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-5 w-5 sm:h-7 sm:w-7 text-white" viewBox="0 0 16 16"> <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/> </svg>
-                    </button>
-                    <button class="p-1 w-fit font-signika-negative font-normal text-sm sm:text-base text-slate-100 bg-rose-600 rounded-3xl ease-in-out hover:bg-rose-700 drop-shadow-md">
+                    <router-link :to="{name: 'MealsEdit', params: {id: props.id, mealId: meal.id}}" class="p-2 w-fit font-signika-negative font-normal text-sm sm:text-base text-slate-100 bg-sky-600 rounded-3xl ease-in-out hover:bg-sky-700 drop-shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-3 w-3 sm:h-5 sm:w-5 text-white" viewBox="0 0 16 16"> <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/> <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/> </svg>
+                    </router-link>
+                    <button @click="handleAction(meal)" class="p-1 w-fit font-signika-negative font-normal text-sm sm:text-base text-slate-100 bg-rose-600 rounded-3xl ease-in-out hover:bg-rose-700 drop-shadow-md">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-5 w-5 sm:h-7 sm:w-7 text-white" viewBox="0 0 16 16"> <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/> </svg>
                     </button>
                 </div>
             </div>
         </div>
+        <div class="flex justify-center w-full">
+            <router-link :to="{name: 'MealsCreate', params: {id: props.id}}" class="py-1 px-3 w-fit font-signika-negative font-medium text-base sm:text-xl text-slate-100 bg-sky-600 rounded-xl ease-in-out hover:bg-sky-700 drop-shadow-md">
+                Agregar comida
+            </router-link>
+        </div>
         <router-link :to="{name: 'MenuIndex', props: {id: props.id}}" class="absolute -top-2 sm:-top-1 left-8 p-2 hover:ease-in-out hover:duration-200 hover:-translate-x-2 hover:drop-shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-7 w-7 text-slate-600" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/> </svg>
         </router-link>
+        <Teleport to="body">
+            <Modal :show="showModalConfirm" @close="showModalConfirm = false">
+                <template #header>
+                    <h3 class="font-signika-negative font-medium text-base md:text-xl text-center text-slate-600">
+                        Comidas
+                    </h3>
+                </template>
+                <template #body>
+                    <p class="font-medium font-signika-negative text-slate-600 text-lg">{{ "¿Quieres eliminar " + target.name + " del menu?" }}</p>
+                </template>
+                <template #footer>
+                    <div class="flex justify-between w-full">
+                        <button @click="deleteMeal()" class="text-slate-100 font-medium font-signika-negative bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm sm:text-lg px-3 py-1.5 text-center">
+                            Aceptar
+                        </button>
+                        <button @click="showModalConfirm = false" class="text-slate-100 font-medium font-signika-negative bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm sm:text-lg px-3 py-1.5 text-center">
+                            Cancelar
+                        </button>
+                    </div>
+                </template>
+            </Modal>
+        </Teleport>
     </div>
 </template>
 
