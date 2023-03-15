@@ -390,7 +390,7 @@ export const useMenusStore = defineStore('menus', () => {
             });
         } catch (error) {
             console.log(error);
-            error.value = "Ha ocurrido un error, intenta más tarde"
+            error.value = "Ha ocurrido un error, intenta más tarde";
         }
 
         return { error };
@@ -438,11 +438,15 @@ export const useMenusStore = defineStore('menus', () => {
     }
 
     const updateMeal = async (id, data) => {
+        const error = ref('');
         try {
             await updateDoc(doc(db, "meals", id), data);
         } catch (error) {
             console.log(error);
+            error.value = "Ha ocurrido un error, intenta más tarde";
         }
+
+        return { error };
     }
 
     const deleteMeal = async (menuId, mealId) => {
