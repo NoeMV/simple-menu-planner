@@ -1,6 +1,5 @@
 <script async setup>
-    import { errorPrefix } from '@firebase/util';
-import { ref } from 'vue';
+    import { ref } from 'vue';
     import { useMenusStore } from '../../stores/menus';
     import Modal from '../Modal.vue';
 
@@ -98,14 +97,14 @@ import { ref } from 'vue';
         </div>
 
         <div class="flex justify-center space-x-3">
-            <input type="text" v-model="inputIngredient" class="py-1 px-3 w-full font-signika-negative text-sm sm:text-base text-slate-600 bg-slate-100 border-2 border-slate-600 rounded-xl">
+            <input type="text" v-model="inputIngredient" class="py-1 px-3 w-full font-signika-negative text-sm sm:text-base text-slate-600 bg-white rounded-xl border border-slate-300 shadow-sm">
             <button @click="addIngredient()" class="py-1 px-3 w-fit font-signika-negative font-medium text-sm sm:text-xl text-slate-100 bg-sky-600 rounded-xl ease-in-out hover:bg-sky-700 drop-shadow-md">
                 Agregar
             </button>
         </div>
 
-        <div class="overflow-auto h-80 space-y-3">
-            <div v-for="ingredient in ingredientsData" :key="ingredient.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+        <div class="overflow-auto h-96 space-y-3">
+            <div v-for="ingredient in ingredientsData" :key="ingredient.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ ingredient.name }}
                 </p>

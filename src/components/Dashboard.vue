@@ -40,9 +40,9 @@
             <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
                 {{ "Menus de " + user?.name }}
             </h1>
-            <div class="overflow-auto h-80 space-y-3">
-                <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="flex justify-between items-center px-4 py-2 rounded-xl shadow-sm border-2 border-slate-600 hover:cursor-pointer" :class="menu.status == 'pending' ? ['bg-amber-200 hover:bg-amber-300'] : menu.status == 'blocked' ? ['bg-rose-300 hover:bg-rose-400'] : ['bg-teal-100 hover:bg-teal-200']">
-                    <p class="font-medium font-signika-negative text-slate-600 text-lg  text-start">{{ menu.name }}</p>
+            <div class="overflow-auto h-96 space-y-3">
+                <div @click="menuAction(menu.code, menu.status)" v-for="menu in user?.menus" :key="menu.code" class="group flex justify-between items-center px-4 py-2 rounded-xl border border-slate-300 shadow-sm ease-in-out hover:cursor-pointer" :class="menu.status == 'pending' ? ['bg-amber-200 hover:bg-amber-300'] : menu.status == 'blocked' ? ['bg-rose-300 hover:bg-rose-400'] : ['bg-white hover:bg-slate-200']">
+                    <p class="font-medium font-signika-negative text-slate-600 text-lg text-start group-hover:scale-105 ease-in-out">{{ menu.name }}</p>
                     <p class="font-normal font-signika-negative text-slate-500 text-end">{{ menu.status == 'pending' ? "Solicitud pendiente" : menu.status == 'blocked' ? "Bloqueado" : "Participante" }}</p>
                 </div>
             </div>

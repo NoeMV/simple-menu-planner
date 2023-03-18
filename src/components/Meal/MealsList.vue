@@ -45,8 +45,8 @@
         <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
             Comidas
         </h1>
-        <div class="overflow-auto h-80 space-y-3">
-            <div v-for="meal in mealsData" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+        <div class="overflow-auto h-96 space-y-3">
+            <div v-for="meal in mealsData" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ meal.name }}
                 </p>

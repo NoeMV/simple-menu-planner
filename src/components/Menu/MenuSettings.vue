@@ -89,7 +89,7 @@
             <p class="font-semibold font-signika-negative text-center text-slate-600 text-xl">
                 Solicitudes
             </p>
-            <div v-for="request in requestsData" :key="request.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+            <div v-for="request in requestsData" :key="request.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ request.name }}
                 </p>
@@ -110,7 +110,7 @@
             <p class="font-semibold font-signika-negative text-slate-600 text-center text-xl">
                 Participantes
             </p>
-            <div v-for="participant in participantsData" :key="participant.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+            <div v-for="participant in participantsData" :key="participant.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ participant.name }}
                 </p>
@@ -123,7 +123,7 @@
             <p class="font-semibold font-signika-negative text-slate-600 text-center text-xl">
                 Bloqueados
             </p>
-            <div v-for="blocked in blockedData" :key="blocked.id" class="flex justify-between items-center py-2 px-4 bg-slate-100 border-2 border-slate-600 rounded-xl">
+            <div v-for="blocked in blockedData" :key="blocked.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ blocked.name }}
                 </p>
