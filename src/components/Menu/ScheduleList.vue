@@ -16,7 +16,7 @@
     const dates = ref([]);
     const menuData = ref({});
     const mealsData = ref([]);
-    const currentTab = ref('');
+    const currentTab = ref('current');
     const selectedMeal = ref([null, null, null, null, null, null, null]);
     const showModalConfirm = ref(false);
     const target = ref({});
@@ -33,7 +33,7 @@
         const {meals, errorMeals} = await menuStore.getMeals(menuData.value.meals);
         mealsData.value = meals.value;
 
-        calcWeek('current');
+        calcWeek(currentTab.value);
     }
 
     function calcWeek(week) {
@@ -88,11 +88,20 @@
         selectedDate.value = dateOption;
         action.value = actionOption;
 
+        let existingDateMessage = '';
+
+        if(target.value.scheduledDate != ''){
+            let copyDate = target.value.scheduledDate.slice().split('-');
+            let scheduledDate = new Date(copyDate[0], (copyDate[1] - 1), copyDate[2]);
+
+            existingDateMessage = ' Ya no se contará como agendado para el ' + (scheduledDate.getDate() < 10 ? "0".concat(scheduledDate.getDate()) : scheduledDate.getDate()) + "/" + ((scheduledDate.getMonth() + 1) < 10 ? "0".concat((scheduledDate.getMonth() + 1)) : (scheduledDate.getMonth() + 1)) + "/" + scheduledDate.getFullYear() + ".";
+        }
+
         let parsedDate = (selectedDate.value.day < 10 ? "0".concat(selectedDate.value.day) : selectedDate.value.day) + "/" + (selectedDate.value.month < 10 ? "0".concat(selectedDate.value.month) : selectedDate.value.month) + "/" + selectedDate.value.year;
 
         statusMessage.value = 
             action.value == 'schedule' 
-            ? '¿Quieres agendar ' + target.value.name + ' para el ' + parsedDate + '?' 
+            ? '¿Quieres agendar ' + target.value.name + ' para el ' + parsedDate + '?' + existingDateMessage 
             : '¿Quieres quitar ' + target.value.name + ' para el ' + parsedDate + '?';
 
         showModalConfirm.value = true;
