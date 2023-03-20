@@ -103,7 +103,7 @@
             </button>
         </div>
 
-        <div class="overflow-auto h-96 space-y-3">
+        <div v-if="ingredientsData.length != 0" class="overflow-auto h-auto max-h-96 space-y-3">
             <div v-for="ingredient in ingredientsData" :key="ingredient.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ ingredient.name }}

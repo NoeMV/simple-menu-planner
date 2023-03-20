@@ -185,6 +185,43 @@ export const useMenusStore = defineStore('menus', () => {
         }
     }
 
+    const deleteMenu = async (menuId, mealsIds, ingredientsIds, participantsIds, blockedIds, requestsIds) => {
+        try {
+            const usersMenu = [...participantsIds, ...blockedIds, ...requestsIds];
+
+            const {users, errorUsers} = await userStore.getUsers(usersMenu);
+
+            await runTransaction(db, async(transaction) => {
+                const response = await transaction.get(doc(db, "menus", menuId));
+                const menu = {id: response.id, ...response.data()};
+
+                if(ingredientsIds.length != 0){
+                    ingredientsIds.forEach(ingredientId => {
+                        transaction.delete(doc(db, "ingredients", ingredientId)); 
+                    });
+                }
+                
+                if(mealsIds.length != 0){
+                    mealsIds.forEach(mealId => {
+                        transaction.delete(doc(db, "meals", mealId));
+                    });
+                }
+
+                users.value.forEach(user => {
+                    const menuList = user.menus;
+                    const indexMenu = menuList.map(e => e.code).indexOf(menuId);
+                    menuList.splice(indexMenu, 1);
+
+                    transaction.update(doc(db, "users", user.id), {menus: menuList});
+                });
+
+                transaction.delete(doc(db, "menus", menuId));
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const acceptRequest = async (menuId, targetId) => {
         try {
             await runTransaction(db, async (transaction) => {
@@ -583,6 +620,46 @@ export const useMenusStore = defineStore('menus', () => {
         return { error };
     }
 
+    const calculateWeekDates = (week) => {
+        const arrDates = [];
+
+        let dateInput = new Date().toISOString().slice(0, 10);
+        let copyDate = dateInput.slice().split('-');
+        let date = new Date(copyDate[0], (copyDate[1] - 1), copyDate[2]);
+
+        let dateWeekDay = date.getDay();
+        let diff = date.getDate() - dateWeekDay + (dateWeekDay === 0 ? -6 : 1);
+
+        let firstWeekDate = new Date(date.setDate(diff));
+
+        let pivotDate;
+
+        if (week == 'current') {
+            pivotDate = firstWeekDate;
+        }
+
+        if (week == 'next') {
+            let firstNextDate = new Date(firstWeekDate);
+            firstNextDate.setDate(firstNextDate.getDate() + 7);
+            pivotDate = firstNextDate;
+        }
+
+        if (week == 'two') {
+            let firstNextTwoDate = new Date(firstWeekDate);
+            firstNextTwoDate.setDate(firstNextTwoDate.getDate() + 14);
+            pivotDate = firstNextTwoDate;
+        }
+
+        for(let i = 0 ; i < 7 ; i++){
+            let tempDate = new Date(new Date(new Date(pivotDate)).setDate(pivotDate.getDate() + i));
+            let tempDay = new Intl.DateTimeFormat("es-ES", {weekday: 'long'}).format(tempDate);
+
+            arrDates.push({fullDate: tempDate.toISOString().slice(0, 10), weekday: tempDay.charAt(0).toUpperCase() + tempDay.slice(1), day: tempDate.getDate(), month: tempDate.getMonth() + 1, year: tempDate.getFullYear()});
+        }
+
+        return arrDates;
+    }
+
     return {
         currentMenuId,
         createMenu,
@@ -592,6 +669,7 @@ export const useMenusStore = defineStore('menus', () => {
         getParticipants,
         getBlocked,
         updateMenu,
+        deleteMenu,
         acceptRequest,
         cancelRequest,
         blockRequest,
@@ -606,6 +684,7 @@ export const useMenusStore = defineStore('menus', () => {
         getIngredients,
         updateIngredient,
         deleteIngredient,
-        removeParticipant
+        removeParticipant,
+        calculateWeekDates
     };
 });

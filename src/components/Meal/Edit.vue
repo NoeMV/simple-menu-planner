@@ -51,7 +51,7 @@
 <template>
     <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
         <div class="relative py-14 px-10 w-3/4 flex flex-col justify-center bg-slate-100 rounded-xl shadow-xl">
-            <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-600">Editar comida</h1>
+            <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600">Editar comida</h1>
             <div v-if="errorMessage" class="py-2 px-4 w-full flex justify-between items-center bg-rose-500 bg-opacity-40 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="hidden sm:block h-7 w-7 text-white" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/> </svg>
                 <h2 class="font-medium font-signika-negative text-rose-600 text-center text-base sm:text-lg">

@@ -33,7 +33,7 @@
 <template>
     <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
         <div class="relative py-14 px-10 w-fit flex flex-col justify-center bg-slate-100 rounded-xl shadow-xl">
-            <h1 class="font-signika-negative font-semibold text-3xl text-center text-slate-600">Crear menu</h1>
+            <h1 class="font-signika-negative font-semibold text-xl sm:text-3xl text-center text-slate-600">Crear menu</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="handleCreate()">
                 <div class="mb-6 relative w-full">
                     <input type="text" autocomplete="off" id="name" placeholder="name" v-model="name" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">

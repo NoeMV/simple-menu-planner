@@ -40,42 +40,8 @@
         dates.value = [];
         selectedMeal.value = [null, null, null, null, null, null, null];
 
-        let dateInput = new Date().toISOString().slice(0, 10);
-        let copyDate = dateInput.slice().split('-');
-        let date = new Date(copyDate[0], (copyDate[1] - 1), copyDate[2]);
-
-        let dateWeekDay = date.getDay();
-        let diff = date.getDate() - dateWeekDay + (dateWeekDay === 0 ? -6 : 1);
-
-        let firstWeekDate = new Date(date.setDate(diff));
-
-        let pivotDate;
-
-        if (week == 'current') {
-            pivotDate = firstWeekDate;
-            currentTab.value = 'current';
-        }
-
-        if (week == 'next') {
-            let firstNextDate = new Date(firstWeekDate);
-            firstNextDate.setDate(firstNextDate.getDate() + 7);
-            pivotDate = firstNextDate;
-            currentTab.value = 'next';
-        }
-
-        if (week == 'two') {
-            let firstNextTwoDate = new Date(firstWeekDate);
-            firstNextTwoDate.setDate(firstNextTwoDate.getDate() + 14);
-            pivotDate = firstNextTwoDate;
-            currentTab.value = 'two';
-        }
-
-        for(let i = 0 ; i < 7 ; i++){
-            let tempDate = new Date(new Date(new Date(pivotDate)).setDate(pivotDate.getDate() + i));
-            let tempDay = new Intl.DateTimeFormat("es-ES", {weekday: 'long'}).format(tempDate);
-
-            dates.value.push({fullDate: tempDate.toISOString().slice(0, 10), weekday: tempDay.charAt(0).toUpperCase() + tempDay.slice(1), day: tempDate.getDate(), month: tempDate.getMonth() + 1, year: tempDate.getFullYear()});
-        }
+        dates.value = menuStore.calculateWeekDates(week);
+        currentTab.value = week;
     }
 
     function showActionModal(targetAction, dateOption, actionOption){
@@ -93,7 +59,6 @@
         if(target.value.scheduledDate != ''){
             let copyDate = target.value.scheduledDate.slice().split('-');
             let scheduledDate = new Date(copyDate[0], (copyDate[1] - 1), copyDate[2]);
-
             existingDateMessage = ' Ya no se contará como agendado para el ' + (scheduledDate.getDate() < 10 ? "0".concat(scheduledDate.getDate()) : scheduledDate.getDate()) + "/" + ((scheduledDate.getMonth() + 1) < 10 ? "0".concat((scheduledDate.getMonth() + 1)) : (scheduledDate.getMonth() + 1)) + "/" + scheduledDate.getFullYear() + ".";
         }
 
@@ -108,9 +73,7 @@
     }
 
     async function manageScheduleMeal(){
-
         const newScheduledDate = action.value == 'schedule' ? selectedDate.value.fullDate : '';
-
         const { error } = await menuStore.updateMeal(target.value.id, {scheduledDate: newScheduledDate});
 
         if(error.value != ''){
@@ -130,20 +93,20 @@
             Plan semanal
         </h1>
         <div class="flex justify-center space-x-3">
-            <button @click="calcWeek('current')" class="py-1 px-1 sm:px-2 font-signika-negative font-semibold text-sm sm:text-lg ease-in-out duration-75" :class="currentTab == 'current' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-600 border-b-2 border-slate-600 hover:border-slate-700 hover:text-slate-700 hover:border-b-4']">
+            <button @click="calcWeek('current')" class="py-1 px-1 sm:px-2 font-signika-negative font-medium text-base sm:text-lg ease-in-out duration-75" :class="currentTab == 'current' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-700 border-b-2 border-slate-700 hover:border-slate-800 hover:text-slate-800 hover:border-b-4']">
                 Semana actual
             </button>
-            <button @click="calcWeek('next')" class="py-1 px-1 sm:px-2 font-signika-negative font-semibold text-sm sm:text-lg ease-in-out duration-75" :class="currentTab == 'next' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-600 border-b-2 border-slate-600 hover:border-slate-700 hover:text-slate-700 hover:border-b-4']">
+            <button @click="calcWeek('next')" class="py-1 px-1 sm:px-2 font-signika-negative font-medium text-base sm:text-lg ease-in-out duration-75" :class="currentTab == 'next' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-700 border-b-2 border-slate-700 hover:border-slate-800 hover:text-slate-800 hover:border-b-4']">
                 Siguiente semana
             </button>
-            <button @click="calcWeek('two')" class="py-1 px-1 sm:px-2 font-signika-negative font-semibold text-sm sm:text-lg ease-in-out duration-75" :class="currentTab == 'two' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-600 border-b-2 border-slate-600 hover:border-slate-700 hover:text-slate-700 hover:border-b-4']">
+            <button @click="calcWeek('two')" class="py-1 px-1 sm:px-2 font-signika-negative font-medium text-base sm:text-lg ease-in-out duration-75" :class="currentTab == 'two' ? ['text-sky-600 border-sky-600 border-b-4 hover:text-sky-800 hover:border-sky-800'] : ['text-slate-700 border-b-2 border-slate-700 hover:border-slate-800 hover:text-slate-800 hover:border-b-4']">
                 En 2 semanas
             </button>
         </div>
 
         <div class="overflow-auto h-96 space-y-3">
             <div v-for="(date, index) in dates" :key="date" class="flex flex-col justify-center items-center py-2 px-4 space-y-2 bg-white rounded-xl border border-slate-300 shadow-sm">
-                <p class="font-semibold font-signika-negative text-slate-600 text-sm sm:text-xl">
+                <p class="font-medium font-signika-negative text-slate-700 text-base sm:text-xl">
                     {{ date.weekday + " " + (date.day < 10 ? "0".concat(date.day) : date.day) + "/" + (date.month < 10 ? "0".concat(date.month) : date.month) + "/" + date.year }}
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full space-x-0 sm:space-x-4 space-y-2 sm:space-y-0">

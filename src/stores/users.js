@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDoc, getDocs, updateDoc, getFirestore, query, where, collection, documentId } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from '@firebase/auth';
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
@@ -107,12 +107,33 @@ export const useUsersStore = defineStore('users', () => {
     const getUser = async (id) => {
         try {
             const response = await getDoc(doc(db, "users", id));
-            let obj = response.data();
-            obj.id = response.id;
-            user.value = obj;
+            user.value = {id: response.id, ...response.data()};
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const getUsers = async (identifiers) => {
+        const users = ref([]);
+        const errorUsers = ref('');
+
+        if(identifiers.length == 0){
+            errorUsers.value = "No hay usuarios relacionados a este menu";
+        } else {
+            try {
+                const q = query(collection(db, "users"), where(documentId(), 'in', identifiers));
+                const response = await getDocs(q);
+
+                response.forEach((doc) => {
+                    errorUsers.value = "";
+                    users.value.push({id: doc.id, ...doc.data()});
+                });
+            } catch (error) {
+                errorUsers.value = "Ha ocurrido un error";
+            }
+        }
+        
+        return { users, errorUsers };
     }
 
     const updateUser = async (id, data) => {
@@ -133,6 +154,7 @@ export const useUsersStore = defineStore('users', () => {
         logout,
         addUser,
         getUser,
+        getUsers,
         updateUser
     };
 });
