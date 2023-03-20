@@ -1,5 +1,5 @@
 <script async setup>
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
     import { useMenusStore } from '../../stores/menus';
     import Modal from '../Modal.vue';
 
@@ -17,6 +17,9 @@
 
     const showModalConfirm = ref(false);
     const target = ref({});
+    const searchInput = ref('');
+
+    const mealsFilter = computed(() => mealsData.value.filter(item => item.name.toUpperCase().includes(searchInput.value.toUpperCase())));
 
     await initData();
 
@@ -45,8 +48,11 @@
         <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
             Comidas
         </h1>
-        <div v-if="mealsData.length != 0" class="overflow-auto h-auto max-h-96 space-y-3">
-            <div v-for="meal in mealsData" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
+
+        <input type="text" v-model="searchInput" placeholder="Buscar..." class="py-1 px-3 w-full font-signika-negative text-sm sm:text-base text-slate-600 bg-white rounded-xl border border-slate-300 shadow-sm">
+
+        <div v-if="mealsData.length != 0" class="overflow-auto h-auto max-h-80 space-y-3">
+            <div v-for="meal in mealsFilter" :key="meal.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ meal.name }}
                 </p>
@@ -59,6 +65,9 @@
                     </button>
                 </div>
             </div>
+            <p v-if="mealsFilter.length == 0" class="font-normal font-signika-negative text-slate-600 text-sm sm:text-lg text-center">
+                No hay resultados
+            </p>
         </div>
         <div class="flex justify-center w-full">
             <router-link :to="{name: 'MealsCreate', params: {id: props.id}}" class="py-1 px-3 w-fit font-signika-negative font-medium text-base sm:text-xl text-slate-100 bg-sky-600 rounded-xl ease-in-out hover:bg-sky-700 drop-shadow-md">
