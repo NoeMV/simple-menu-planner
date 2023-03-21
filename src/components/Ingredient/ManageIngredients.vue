@@ -91,7 +91,12 @@
             Ingredientes
         </h1>
 
-        <input type="text" v-model="searchInput" placeholder="Buscar..." class="py-1 px-3 w-full font-signika-negative text-sm sm:text-base text-slate-600 bg-white rounded-xl border border-slate-300 shadow-sm">
+        <div class="relative w-full">
+            <input type="text" autocomplete="off" id="search" placeholder="search" v-model="searchInput" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+            <label for="search" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
+                Buscar
+            </label>
+        </div>
 
         <div v-if="ingredientsData.length != 0" class="overflow-auto h-auto max-h-80 space-y-3">
             <div v-for="ingredient in ingredientsFilter" :key="ingredient.id" class="flex justify-between items-center py-2 px-4 bg-white rounded-xl border border-slate-300 shadow-sm">
@@ -132,8 +137,8 @@
                         {{ "¿Quieres eliminar " + target.name + " del menu?" }}
                     </p>
                     <div v-else class="mb-6 relative w-full">
-                        <input required type="text" id="name" placeholder="Nombre" v-model="inputModalIngredient" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">
-                        <label for="name" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                        <input required type="text" id="name" placeholder="Nombre" v-model="inputModalIngredient" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                        <label for="name" class="absolute -top-[0.3rem] bg-white leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-white peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                             Nombre
                         </label>
                     </div>

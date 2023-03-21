@@ -1,5 +1,5 @@
 <script setup>
-    import { onBeforeMount, ref } from 'vue';
+    import { onBeforeMount, ref, computed } from 'vue';
     import { useMenusStore } from '../../stores/menus';
     import { useRouter } from 'vue-router';
     import Modal from '../Modal.vue';
@@ -22,6 +22,9 @@
     const showModalIngredients = ref(false);
     const mealData = ref({});
     const ingredientsData = ref([]);
+    const searchInput = ref('');
+
+    const ingredientsFilter = computed(() => ingredientsData.value.filter(item => item.name.toUpperCase().includes(searchInput.value.toUpperCase())));
 
     onBeforeMount(async () => {
         const {menu, errorMenu} = await menuStore.getMenu(props.id);
@@ -34,7 +37,7 @@
 
     async function editMeal(){
         const {id:_, ...parsedData} = mealData.value;
-        parsedData.ingredients = ingredientsData.value.filter(e => e.check == true).map(f => f.id);
+        parsedData.ingredients = ingredientsFilter.value.filter(e => e.check == true).map(f => f.id);
 
         const { error } = await menuStore.updateMeal(props.mealId, parsedData);
 
@@ -63,14 +66,14 @@
             </div>
             <form @submit.prevent="editMeal()" class="flex flex-col items-center justify-center w-full px-6 mt-8">
                 <div class="mb-6 relative w-full">
-                    <input type="text" id="name" placeholder="Nombre" v-model="mealData.name" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">
-                    <label for="name" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                    <input type="text" id="name" placeholder="Nombre" v-model="mealData.name" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <label for="name" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Nombre
                     </label>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <textarea id="description" v-model="mealData.description" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none"></textarea>
-                    <label for="description" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                    <textarea type="text" id="description" placeholder="Descripcion" v-model="mealData.description" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60"></textarea>
+                    <label for="description" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-[28%] peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Descripción
                     </label>
                 </div>
@@ -80,24 +83,24 @@
                     </button>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <select v-model="mealData.duration" id="duration" class="mt-2 w-full bg-slate-100 border-b-2 border-slate-600 p-2.5 text-sm text-slate-600 transition ease-in-out focus:border-slate-800 focus:outline-none">
+                    <select v-model="mealData.duration" id="duration" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
                         <option value="corta">{{ "Corta" }}</option>
                         <option value="media">{{ "Media" }}</option>
                         <option value="larga">{{ "Larga" }}</option>
                     </select>
-                    <label for="duration" class="absolute top-0 left-0 origin-left pl-0 -translate-y-1/2 opacity-75 transform text-sm text-slate-600 font-signika-negative">
+                    <label for="duration" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Duración
                     </label>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <input type="date" id="lastDate" v-model="mealData.lastDate" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">
-                    <label for="lastDate" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                    <input type="date" id="lastDate" v-model="mealData.lastDate" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <label for="lastDate" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Última vez cocinado
                     </label>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <input type="date" id="scheduledDate" v-model="mealData.scheduledDate" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">
-                    <label for="scheduledDate" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                    <input type="date" id="scheduledDate" v-model="mealData.scheduledDate" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <label for="scheduledDate" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Agendado para
                     </label>
                 </div>
@@ -109,7 +112,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-7 w-7 text-slate-600" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/> </svg>
             </router-link>
             <Teleport to="body">
-                <Modal :show="showModalIngredients" @close="showModalIngredients = false">
+                <Modal :show="showModalIngredients" @close="showModalIngredients = false; searchInput = '';">
                     <template #header>
                         <h3 class="font-signika-negative font-medium text-base md:text-xl text-center text-slate-600">
                             Ingredientes
@@ -117,13 +120,19 @@
                     </template>
                     <template #body>
                         <div class="flex justify-center">
-                            <router-link :to="{name: 'IngredientsIndex', params: {id: props.id}}" class="font-medium font-signika-negative text-sky-600 text-center text-base sm:text-lg text-center underline hover:text-sky-800">
+                            <router-link :to="{name: 'IngredientsIndex', params: {id: props.id}}" class="font-medium font-signika-negative text-sky-600 text-center text-base sm:text-lg underline hover:text-sky-800">
                                 Gestionar ingredientes
                             </router-link>
                         </div>
-                        <div v-if="ingredientsData.length != 0" class="overflow-auto h-60 space-y-3">
+                        <div class="relative w-full">
+                            <input type="text" autocomplete="off" id="search" placeholder="search" v-model="searchInput" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                            <label for="search" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
+                                Buscar
+                            </label>
+                        </div>
+                        <div v-if="ingredientsFilter.length != 0" class="overflow-auto h-60 space-y-3">
                             <fieldset>
-                                <div class="mb-6" v-for="ingredient in ingredientsData" :key="ingredient.id">
+                                <div class="mb-6" v-for="ingredient in ingredientsFilter" :key="ingredient.id">
                                     <div class="flex items-center">
                                         <input type="checkbox" :id="ingredient.id" v-model="ingredient.check" class="h-4 w-4 text-sky-500 bg-gray-100 border-gray-300 rounded-lg transition ease-in-out duration-200 cursor-pointer" />
                                         <label :for="ingredient.id" class="ml-3 font-medium font-signika-negative text-slate-600">{{ ingredient.name }}</label>
