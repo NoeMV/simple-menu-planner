@@ -36,17 +36,17 @@
             <h1 class="font-signika-negative font-semibold text-xl sm:text-3xl text-center text-slate-600">Crear menu</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="handleCreate()">
                 <div class="mb-6 relative w-full">
-                    <input type="text" autocomplete="off" id="name" placeholder="name" v-model="name" class="peer mt-1 w-full bg-opacity-0 bg-slate-100 border-b-2 border-slate-600 px-0 py-2 placeholder:text-transparent focus:border-slate-800 focus:outline-none">
-                    <label for="name" class="font-signika-negative pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-slate-600 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-placeholder-shown:font-signika-negative peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-slate-800">
+                    <input type="text" id="name" placeholder="Nombre" v-model="name" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <label for="name" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Nombre
                     </label>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <select v-model="variety" id="variety" class="mt-2 w-full bg-slate-100 border-b-2 border-slate-600 p-2.5 text-sm text-slate-600 transition ease-in-out focus:border-slate-800 focus:outline-none">
+                    <select v-model="variety" id="variety" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
                         <option value="true">{{ "Si" }}</option>
                         <option value="false">{{ "No" }}</option>
                     </select>
-                    <label for="variety" class="absolute top-0 left-0 origin-left pl-0 -translate-y-1/2 opacity-75 transform text-sm text-slate-600 font-signika-negative">
+                    <label for="variety" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Opciones variadas
                     </label>
                 </div>

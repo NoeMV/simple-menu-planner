@@ -119,12 +119,16 @@ export const useMenusStore = defineStore('menus', () => {
             errorRequests.value = "No hay solicitudes para unirse al menu";
         } else {
             try {
-                const q = query(collection(db, "users"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorRequests.value = "";
-                    requests.value.push({id: doc.id, ...doc.data()});
-                });
+                let identifiersCopy = [...identifiers];
+
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "users"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+                    response.forEach((doc) => {
+                        errorRequests.value = "";
+                        requests.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -141,12 +145,16 @@ export const useMenusStore = defineStore('menus', () => {
             errorParticipants.value = "No hay comidas en el menu";
         } else {
             try {
-                const q = query(collection(db, "users"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorParticipants.value = "";
-                    participants.value.push({id: doc.id, ...doc.data()});
-                });
+                let identifiersCopy = [...identifiers];
+
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "users"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+                    response.forEach((doc) => {
+                        errorParticipants.value = "";
+                        participants.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -163,12 +171,16 @@ export const useMenusStore = defineStore('menus', () => {
             errorBlocked.value = "No hay comidas en el menu";
         } else {
             try {
-                const q = query(collection(db, "users"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorBlocked.value = "";
-                    blocked.value.push({id: doc.id, ...doc.data()});
-                });
+                let identifiersCopy = [...identifiers];
+
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "users"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+                    response.forEach((doc) => {
+                        errorBlocked.value = "";
+                        blocked.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -460,12 +472,16 @@ export const useMenusStore = defineStore('menus', () => {
             errorMeals.value = "No hay comidas en el menu";
         } else {
             try {
-                const q = query(collection(db, "meals"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorMeals.value = "";
-                    meals.value.push({id: doc.id, ...doc.data()});
-                });
+                let identifiersCopy = [...identifiers];
+
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "meals"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+                    response.forEach((doc) => {
+                        errorMeals.value = "";
+                        meals.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -564,12 +580,16 @@ export const useMenusStore = defineStore('menus', () => {
             errorIngredients.value = "No hay ingredientes";
         } else {
             try {
-                const q = query(collection(db, "ingredients"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
-                response.forEach((doc) => {
-                    errorIngredients.value = "";
-                    ingredients.value.push({id: doc.id, ...doc.data()});
-                });
+                let identifiersCopy = [...identifiers];
+
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "ingredients"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+                    response.forEach((doc) => {
+                        errorIngredients.value = "";
+                        ingredients.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -660,6 +680,58 @@ export const useMenusStore = defineStore('menus', () => {
         return arrDates;
     }
 
+    const sortMeals = (variety) => {
+        return function (a, b) {
+            if(a.lastDate == ''){
+                if (variety == 'true') {
+                    if(a.duration == 'larga') return 1;
+                    else return -1;
+                }
+                return 1;
+            }
+
+            if(a.lastDate < b.lastDate){
+                let firstDate = new Date(a.lastDate).getTime();
+                let currentDate = new Date().getTime();
+                let diffDays = Math.ceil((currentDate - firstDate) / (1000 * 3600 * 24));
+
+                if(diffDays >= 20){
+                    if (variety == 'true') {
+                        return -1;    
+                    }
+                    return 1;
+                } 
+
+                if(diffDays < 20 && a.duration != 'larga'){
+                    return -1;    
+                }
+
+                if(diffDays < 20 && a.duration == 'larga'){
+                    return 0;
+                }
+
+                return 1;
+            }
+
+            if(a.lastDate > b.lastDate){
+                if (variety == 'true') {
+                    return 1;
+                }
+                return -1;
+            }
+
+            return 0;
+        };
+    }
+
+    const getSuggestionsList = (meals, menuVariety, ingredientsFilter = []) => {
+        const suggestionMealsList = meals.filter(meal => meal.scheduledDate == '');
+
+        suggestionMealsList.sort(sortMeals(menuVariety));
+
+        return ingredientsFilter.length == 0 ? suggestionMealsList.slice(0, 5) : suggestionMealsList.filter(item => item.ingredients.some(ingr => ingredientsFilter.includes(ingr))).slice(0, 5);
+    }
+
     return {
         currentMenuId,
         createMenu,
@@ -685,6 +757,7 @@ export const useMenusStore = defineStore('menus', () => {
         updateIngredient,
         deleteIngredient,
         removeParticipant,
-        calculateWeekDates
+        calculateWeekDates,
+        getSuggestionsList
     };
 });

@@ -121,13 +121,17 @@ export const useUsersStore = defineStore('users', () => {
             errorUsers.value = "No hay usuarios relacionados a este menu";
         } else {
             try {
-                const q = query(collection(db, "users"), where(documentId(), 'in', identifiers));
-                const response = await getDocs(q);
+                let identifiersCopy = [...identifiers];
 
-                response.forEach((doc) => {
-                    errorUsers.value = "";
-                    users.value.push({id: doc.id, ...doc.data()});
-                });
+                while(identifiersCopy.length > 0){
+                    const q = query(collection(db, "users"), where(documentId(), 'in', identifiersCopy.splice(0, 10)));
+                    const response = await getDocs(q);
+
+                    response.forEach((doc) => {
+                        errorUsers.value = "";
+                        users.value.push({id: doc.id, ...doc.data()});
+                    });
+                }
             } catch (error) {
                 errorUsers.value = "Ha ocurrido un error";
             }
