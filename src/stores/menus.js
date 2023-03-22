@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, getFirestore, documentId, updateDoc, deleteDoc, runTransaction } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs, getFirestore, documentId, updateDoc, runTransaction } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useUsersStore } from './users';

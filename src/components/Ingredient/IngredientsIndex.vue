@@ -1,5 +1,5 @@
 <script setup>
-    import CardFallback from './../CardFallback.vue';
+    import CardFallback from '../CardFallback.vue';
     import ManageIngredients from './ManageIngredients.vue';
 
     const props = defineProps({
