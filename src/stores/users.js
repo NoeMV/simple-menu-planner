@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, getDocs, updateDoc, getFirestore, query, where, collection, documentId } from "firebase/firestore/lite";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -50,6 +50,8 @@ export const useUsersStore = defineStore('users', () => {
 
     const login = async (email, password) => {
         try {
+            const {signInWithEmailAndPassword} = await import('firebase/auth');
+
             await signInWithEmailAndPassword(getAuth(), email, password);
             router.push('/dashboard');
         } catch (error) {
@@ -76,6 +78,8 @@ export const useUsersStore = defineStore('users', () => {
     const authWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
         try {
+            const {signInWithPopup} = await import('firebase/auth');
+
             const res = await signInWithPopup(getAuth(), provider);
             if(res._tokenResponse.hasOwnProperty('isNewUser')){
                 await addUser(res.user.uid, {name: res.user.displayName, email: res.user.email, menus: []});
