@@ -9,7 +9,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['vue', 'vue-router', 'pinia', 'vue-select'],
+          vendor: ['vue'],
+          ecosystem: ['vue-router', 'pinia'],
+          components: ['vue-select'],
           firebase: ['firebase/app'],
           firestore: ['firebase/firestore/lite'],
           auth: ['firebase/auth'],
