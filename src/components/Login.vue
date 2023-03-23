@@ -44,7 +44,7 @@
             </div>
             <div class="flex flex-col items-center justify-center w-full px-16 space-y-2">
                 <button @click="userStore.authWithGoogle()" class="py-2 px-5 flex items-center font-signika-negative font-medium text-lg text-slate-600 bg-white rounded-xl border-2 border-slate-300 shadow-sm ease-in-out hover:bg-slate-200">
-                    <img class="h-6 w-6 mr-3" src="http://www.logomaven.com/wp-content/uploads/Google-Logo-542x554px-compressed.png" alt="" />
+                    <img class="h-6 w-6 mr-3" src="https://www.logomaven.com/wp-content/uploads/Google-Logo-542x554px-compressed.png" alt="" />
                     Google
                 </button>
             </div>
