@@ -10,7 +10,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['vue', 'vue-router', 'pinia', 'vue-select'],
-          firebase: ['firebase/app', 'firebase/firestore'],
+          firebase: ['firebase/app'],
+          firestore: ['firebase/firestore'],
           auth: ['firebase/auth'],
           stores: ['./src/stores/menus', './src/stores/users']
         },
