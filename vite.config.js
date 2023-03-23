@@ -11,7 +11,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['vue', 'vue-router', 'pinia', 'vue-select'],
           firebase: ['firebase/app'],
-          firestore: ['firebase/firestore'],
+          firestore: ['firebase/firestore/lite'],
           auth: ['firebase/auth'],
           stores: ['./src/stores/menus', './src/stores/users']
         },
