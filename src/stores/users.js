@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, getDocs, updateDoc, getFirestore, query, where, collection, documentId } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from '@firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { ref } from "vue";
