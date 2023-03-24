@@ -31,18 +31,18 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl h-full flex justify-center items-center">
+    <div class="mx-auto max-w-7xl px-10 h-full w-full flex justify-center items-center">
         <div class="relative py-14 px-10 w-fit flex flex-col justify-center bg-slate-100 rounded-xl shadow-xl">
             <h1 class="font-signika-negative font-semibold text-xl sm:text-3xl text-center text-slate-600">Crear menu</h1>
             <form class="flex flex-col items-center justify-center w-full px-6 mt-8" @submit.prevent="handleCreate()">
                 <div class="mb-6 relative w-full">
-                    <input type="text" id="name" placeholder="Nombre" v-model="name" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <input required type="text" id="name" placeholder="Nombre" v-model="name" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
                     <label for="name" class="absolute -top-[0.3rem] bg-slate-100 leading-none left-2.5 origin-left px-0.5 -translate-y-1/2 transform text-sm text-center text-slate-700 transition-all duration-100 ease-in-out font-signika-negative peer-placeholder-shown:bg-white peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-600 peer-focus:bg-slate-100 peer-focus:leading-none peer-focus:-top-[0.3rem] peer-focus:px-0.5 peer-focus:text-sm peer-focus:text-slate-800">
                         Nombre
                     </label>
                 </div>
                 <div class="mb-6 relative w-full">
-                    <select v-model="variety" id="variety" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
+                    <select required v-model="variety" id="variety" class="peer mt-0 w-full bg-white border border-slate-300 px-2.5 py-1 rounded-xl placeholder:text-transparent focus:border-sky-600 focus:ring-2 focus:ring-offset-0 focus:ring-offset-sky-600 focus:ring-opacity-60">
                         <option value="true">{{ "Si" }}</option>
                         <option value="false">{{ "No" }}</option>
                     </select>

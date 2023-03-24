@@ -12,7 +12,7 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
+    <div class="mx-auto max-w-7xl px-10 h-full w-full flex justify-center items-center">
         <Suspense>
             <MenuMain :id="props.id"></MenuMain>
             <template #fallback>

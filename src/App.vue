@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <div class="min-h-full h-screen overflow-y-auto">
+  <div class="min-h-screen h-full w-full overflow-y-auto bg-gradient-to-tl from-cyan-300 to-lime-200 bg-cover aspect-auto flex justify-center items-center">
     <div class="absolute top-4 flex justify-between w-full px-10 py-1 rounded-lg">
         <button @click="showNav = !showNav" v-if="userStore.isLoggedIn" class="p-1 w-fit ease-in-out bg-white bg-opacity-30 backdrop-blur-md drop-shadow-sm rounded-lg shadow-lg hover:bg-opacity-50">
           <Transition name="menu" mode="out-in">

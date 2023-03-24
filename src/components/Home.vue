@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
+    <div class="mx-auto max-w-7xl px-10 h-full w-full flex justify-center items-center">
         <div class="py-5 sm:py-14 px-10 flex flex-col justify-center items-center space-y-4 sm:space-y-8 bg-slate-100 rounded-xl shadow-xl">
             <h1 class="font-signika-negative font-semibold text-2xl sm:text-4xl text-center text-slate-600">Simple menu planner</h1>
             <p class="font-signika-negative font-medium text-base sm:text-xl text-justify text-slate-600">

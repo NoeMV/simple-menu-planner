@@ -11,7 +11,7 @@
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl px-10 h-full flex justify-center items-center">
+    <div class="mx-auto max-w-7xl px-10 h-full w-full flex justify-center items-center">
         <Suspense>
             <ManageIngredients :id="props.id"></ManageIngredients>
             <template #fallback>
