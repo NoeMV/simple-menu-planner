@@ -1,7 +1,17 @@
-# Vue 3 + Vite
+# Simple Menu Planner
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Aplicación web para seguimiento y planeación de comidas semanalmente, con sugerencias de comidas para los usuarios y control de participantes en cada menu.
 
-## Recommended IDE Setup
+## Stack utilizado
+- Vue Js
+- Tailwind CSS
+- Firebase (Auth y Firestore)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Demo en: https://simple-menu-planner.netlify.app/
+
+## Para ejecutarlo de forma local
+- Crea un nuevo proyecto en la consola de firebase
+- Inicializa firestore
+- Inicializa la autenticación por correo y Google
+- Reemplaza tu configuración en el archivo firebase.js
+- Añade reglas de acceso a tu base de datos y autenticación por Google
