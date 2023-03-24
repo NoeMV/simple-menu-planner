@@ -643,7 +643,8 @@ export const useMenusStore = defineStore('menus', () => {
     const calculateWeekDates = (week) => {
         const arrDates = [];
 
-        let dateInput = new Date().toISOString().slice(0, 10);
+        let temp = new Date().toLocaleDateString().split('/');
+        let dateInput = temp[2] + "-" + (temp[1] < 10 ? '0'.concat(temp[1]) : temp[1]) + "-" + (temp[0] < 10 ? '0'.concat(temp[0]) : temp[0]);
         let copyDate = dateInput.slice().split('-');
         let date = new Date(copyDate[0], (copyDate[1] - 1), copyDate[2]);
 
@@ -673,8 +674,9 @@ export const useMenusStore = defineStore('menus', () => {
         for(let i = 0 ; i < 7 ; i++){
             let tempDate = new Date(new Date(new Date(pivotDate)).setDate(pivotDate.getDate() + i));
             let tempDay = new Intl.DateTimeFormat("es-ES", {weekday: 'long'}).format(tempDate);
-
-            arrDates.push({fullDate: tempDate.toISOString().slice(0, 10), weekday: tempDay.charAt(0).toUpperCase() + tempDay.slice(1), day: tempDate.getDate(), month: tempDate.getMonth() + 1, year: tempDate.getFullYear()});
+            let anotherTempDate = tempDate.toLocaleDateString().split('/');
+            let finalFullDateForReal = anotherTempDate[2] + "-" + (anotherTempDate[1] < 10 ? '0'.concat(anotherTempDate[1]) : anotherTempDate[1]) + "-" + (anotherTempDate[0] < 10 ? '0'.concat(anotherTempDate[0]) : anotherTempDate[0]);
+            arrDates.push({fullDate: finalFullDateForReal, weekday: tempDay.charAt(0).toUpperCase() + tempDay.slice(1), day: tempDate.getDate(), month: tempDate.getMonth() + 1, year: tempDate.getFullYear()});
         }
 
         return arrDates;

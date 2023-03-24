@@ -19,8 +19,7 @@
     const mealsData = ref([]);
     const ingredientsData = ref([]);
     const mealsSuggestionsData = ref([]);
-    const showAlert = ref(true);
-    const todayDate = new Date().toISOString().slice(0, 10);
+    const showAlert = ref(true);  
     const errorModalMessage = ref('');
     const showModalConfirm = ref(false);
     const statusMessage = ref('');
@@ -33,6 +32,11 @@
 
     await initData();
 
+    function todayDate() {
+        let temp = new Date().toLocaleDateString().split('/');
+        return temp[2] + "-" + (temp[1] < 10 ? '0'.concat(temp[1]) : temp[1]) + "-" + (temp[0] < 10 ? '0'.concat(temp[0]) : temp[0]);
+    }
+
     async function initData() {
         const {menu, errorMenu} = await menuStore.getMenu(props.id);
         menuData.value = menu.value;
@@ -43,7 +47,7 @@
         const {ingredients, errorIngredients} = await menuStore.getIngredients(menuData.value.ingredients);
         ingredientsData.value = ingredients.value;
 
-        const outdatedMeals = mealsData.value.filter(meal => meal.scheduledDate < todayDate);
+        const outdatedMeals = mealsData.value.filter(meal => meal.scheduledDate < todayDate() && meal.scheduledDate.length > 0);
 
         if(outdatedMeals.length != 0) {
             outdatedMeals.forEach(async (item) => {
@@ -66,7 +70,7 @@
     }
 
     async function manageScheduledMeal() {
-        const data = action.value == 'cooked' ? {scheduledDate: '', lastDate: todayDate} : {scheduledDate: ''} ;
+        const data = action.value == 'cooked' ? {scheduledDate: '', lastDate: todayDate()} : {scheduledDate: ''} ;
 
         const { error } = await menuStore.updateMeal(target.value.id, data);
         if(error.value != ''){
@@ -100,11 +104,11 @@
             </button>
         </div>
 
-        <div v-if="mealsData.filter(meal => meal.scheduledDate == todayDate).length != 0" class="overflow-auto h-auto max-h-48 w-full flex flex-col justify-center items-center py-2 px-4 space-y-2 bg-white rounded-xl border border-slate-300 shadow-sm">
+        <div v-if="mealsData.filter(meal => meal.scheduledDate == todayDate()).length != 0" class="overflow-auto h-auto max-h-48 w-full flex flex-col justify-center items-center py-2 px-4 space-y-2 bg-white rounded-xl border border-slate-300 shadow-sm">
             <p class="font-medium font-signika-negative text-slate-700 text-base sm:text-xl">
                 Agendado para hoy
             </p>
-            <div v-for="meal in mealsData.filter(meal => meal.scheduledDate == todayDate)" :key="meal.id" class="w-full flex justify-between items-center py-1 px-3 bg-white rounded-xl border border-slate-300 shadow-sm">
+            <div v-for="meal in mealsData.filter(meal => meal.scheduledDate == todayDate())" :key="meal.id" class="w-full flex justify-between items-center py-1 px-3 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-medium font-signika-negative text-slate-600 text-sm sm:text-lg">
                     {{ meal.name }}
                 </p>
