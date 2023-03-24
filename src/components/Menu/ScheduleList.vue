@@ -88,7 +88,7 @@
 </script>
 
 <template>
-    <div class="relative py-8 px-10 w-full items-center space-y-8 bg-slate-100 rounded-xl shadow-xl">
+    <div class="relative py-8 px-6 w-full items-center space-y-8 bg-slate-100 rounded-xl shadow-xl">
         <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
             Plan semanal
         </h1>
