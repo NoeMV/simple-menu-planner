@@ -88,7 +88,7 @@
 </script>
 
 <template>
-    <div class="relative py-8 px-6 w-full items-center space-y-8 bg-slate-100 rounded-xl shadow-xl">
+    <div class="relative py-8 px-6 w-full items-center space-y-5 bg-slate-100 rounded-xl shadow-xl">
         <h1 class="font-signika-negative font-semibold text-xl md:text-3xl text-center text-slate-600 w-full pb-2 border-b-2 border-slate-600">
             Plan semanal
         </h1>
@@ -104,7 +104,7 @@
             </button>
         </div>
 
-        <div class="overflow-auto h-96 space-y-3">
+        <div class="overflow-auto h-[18.5rem] space-y-3">
             <div v-for="(date, index) in dates" :key="date" class="flex flex-col justify-center items-center py-2 px-4 space-y-2 bg-white rounded-xl border border-slate-300 shadow-sm">
                 <p class="font-medium font-signika-negative text-slate-700 text-base sm:text-xl">
                     {{ date.weekday + " " + (date.day < 10 ? "0".concat(date.day) : date.day) + "/" + (date.month < 10 ? "0".concat(date.month) : date.month) + "/" + date.year }}
@@ -132,7 +132,7 @@
             </div>
         </div>
 
-        <router-link :to="{name: 'MenuIndex', props: {id: props.id}}" class="absolute -top-2 sm:-top-1 left-8 p-2 hover:ease-in-out hover:duration-200 hover:-translate-x-2 hover:drop-shadow-lg">
+        <router-link :to="{name: 'MenuIndex', props: {id: props.id}}" class="absolute top-1 sm:top-2 left-8 p-2 hover:ease-in-out hover:duration-200 hover:-translate-x-2 hover:drop-shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-7 w-7 text-slate-600" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/> </svg>
         </router-link>
 
